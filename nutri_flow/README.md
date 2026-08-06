@@ -28,8 +28,8 @@ State is managed with Riverpod (`lib/providers`); data access lives in
 
    ```bash
    flutter run \
-     --dart-define=SUPABASE_URL=https://xxxx.supabase.co \
-     --dart-define=SUPABASE_ANON_KEY=eyJ... \
+     --dart-define=SUPABASE_URL=https://fxfambjealokclkrbmaq.supabase.co \
+     --dart-define=SUPABASE_ANON_KEY=sb_publishable_s4k3LVhcwPHbbLhxkq5MxA_zKN_KBWo \
      --dart-define=PDF_SERVICE_URL=https://your-pdf-service.onrender.com
    ```
 

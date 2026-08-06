@@ -8,18 +8,64 @@ Future<String?> showTextFieldDialog(
   String initial = '',
   String hint = '',
   String confirmLabel = 'حفظ',
-}) async {
-  final controller = TextEditingController(text: initial);
-  final result = await showDialog<String>(
+}) {
+  return showDialog<String>(
     context: context,
-    builder: (context) => AlertDialog(
-      title: Text(title),
+    builder: (context) => _TextFieldDialog(
+      title: title,
+      initial: initial,
+      hint: hint,
+      confirmLabel: confirmLabel,
+    ),
+  );
+}
+
+class _TextFieldDialog extends StatefulWidget {
+  const _TextFieldDialog({
+    required this.title,
+    required this.initial,
+    required this.hint,
+    required this.confirmLabel,
+  });
+
+  final String title;
+  final String initial;
+  final String hint;
+  final String confirmLabel;
+
+  @override
+  State<_TextFieldDialog> createState() => _TextFieldDialogState();
+}
+
+class _TextFieldDialogState extends State<_TextFieldDialog> {
+  late final TextEditingController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = TextEditingController(text: widget.initial);
+  }
+
+  @override
+  void dispose() {
+    // Safe here (unlike disposing right after `await showDialog(...)`
+    // returns in the caller): the framework only calls this once the
+    // dialog route — and this TextField along with it — has actually
+    // finished unmounting, well after its exit animation completes.
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: Text(widget.title),
       content: TextField(
-        controller: controller,
+        controller: _controller,
         autofocus: true,
         minLines: 1,
         maxLines: 5,
-        decoration: InputDecoration(hintText: hint),
+        decoration: InputDecoration(hintText: widget.hint),
       ),
       actions: [
         TextButton(
@@ -28,14 +74,12 @@ Future<String?> showTextFieldDialog(
         ),
         FilledButton(
           onPressed: () {
-            final text = controller.text.trim();
+            final text = _controller.text.trim();
             Navigator.pop(context, text.isEmpty ? null : text);
           },
-          child: Text(confirmLabel),
+          child: Text(widget.confirmLabel),
         ),
       ],
-    ),
-  );
-  controller.dispose();
-  return result;
+    );
+  }
 }
