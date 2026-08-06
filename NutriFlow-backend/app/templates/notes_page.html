@@ -1,0 +1,120 @@
+<!-- صفحة التعليمات (الصيام + الملاحظات العامة) -->
+<div class="page">
+  <div class="page-header">
+    <div>
+      <div class="eyebrow">NutriFlow</div>
+      <div class="title">تعليمات النظام</div>
+    </div>
+    <div class="eyebrow">{{ plan.patient_name }}</div>
+  </div>
+
+  {% if plan.fasting_hours or plan.fasting_notes %}
+  <div class="list-section">
+    <h3>الصيام المتقطع</h3>
+    {% if plan.fasting_hours %}<p>مدة الصيام: {{ plan.fasting_hours }} ساعة.</p>{% endif %}
+    {% if plan.fasting_notes %}<p>{{ plan.fasting_notes }}</p>{% endif %}
+  </div>
+  {% endif %}
+
+  {% if plan.general_notes %}
+  <div class="list-section">
+    <h3>ملاحظات عامة</h3>
+    <p>{{ plan.general_notes }}</p>
+  </div>
+  {% endif %}
+</div>
+
+<!-- صفحة المسموحات والممنوعات -->
+<div class="page">
+  <div class="page-header">
+    <div>
+      <div class="eyebrow">NutriFlow</div>
+      <div class="title">المسموح والممنوع</div>
+    </div>
+    <div class="eyebrow">{{ plan.patient_name }}</div>
+  </div>
+
+  <div class="list-section">
+    <h3>مسموح</h3>
+    {% for category, group in allowed_foods|groupby("category") %}
+    <p><strong>{{ category }}:</strong></p>
+    <div class="chip-list">
+      {% for f in group %}<span class="chip allowed">{{ f.item }}</span>{% endfor %}
+    </div>
+    {% endfor %}
+  </div>
+
+  <div class="list-section">
+    <h3>ممنوع</h3>
+    {% for category, group in forbidden_foods|groupby("category") %}
+    <p><strong>{{ category }}:</strong></p>
+    <div class="chip-list">
+      {% for f in group %}<span class="chip forbidden">{{ f.item }}</span>{% endfor %}
+    </div>
+    {% endfor %}
+  </div>
+</div>
+
+<!-- صفحة المكملات الغذائية -->
+<div class="page">
+  <div class="page-header">
+    <div>
+      <div class="eyebrow">NutriFlow</div>
+      <div class="title">المكملات الغذائية</div>
+    </div>
+    <div class="eyebrow">{{ plan.patient_name }}</div>
+  </div>
+
+  {% if supplements %}
+  <table class="simple-table">
+    <thead>
+      <tr><th>المكمّل</th><th>الجرعة</th><th>التوقيت</th><th>ملاحظات</th></tr>
+    </thead>
+    <tbody>
+      {% for s in supplements %}
+      <tr>
+        <td>{{ s.supplement.name if s.supplement else "—" }}</td>
+        <td>{{ (s.dose or (s.supplement.default_dose if s.supplement else "")) or "—" }}</td>
+        <td>{{ (s.timing or (s.supplement.default_timing if s.supplement else "")) or "—" }}</td>
+        <td>{{ (s.notes or (s.supplement.default_notes if s.supplement else "")) or "—" }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <p>لا توجد مكملات مضافة لهذه الخطة.</p>
+  {% endif %}
+</div>
+
+<!-- صفحة المشروبات المساعدة -->
+<div class="page">
+  <div class="page-header">
+    <div>
+      <div class="eyebrow">NutriFlow</div>
+      <div class="title">المشروبات المساعدة</div>
+    </div>
+    <div class="eyebrow">{{ plan.patient_name }}</div>
+  </div>
+
+  {% if drinks %}
+  {% for drink in drinks %}
+  <div class="list-section">
+    <h3>{{ drink.name }}{% if drink.timing %} — {{ drink.timing }}{% endif %}</h3>
+    {% if drink.ingredients %}
+    <ul>
+      {% for ing in drink.ingredients %}
+      <li>{{ ing.item }}{% if ing.amount %} — {{ ing.amount }} {{ ing.unit }}{% endif %}</li>
+      {% endfor %}
+    </ul>
+    {% endif %}
+  </div>
+  {% endfor %}
+  {% else %}
+  <p>لا توجد مشروبات مساعدة مضافة لهذه الخطة.</p>
+  {% endif %}
+</div>
+
+<!-- صفحة ختامية تحفيزية -->
+<div class="page closing brand-gradient">
+  <div class="closing-text">أنتِ أقوى مما تتخيلين — استمري 💪</div>
+</div>

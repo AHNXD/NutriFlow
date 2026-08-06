@@ -1,0 +1,8 @@
+{% extends "base.html" %}
+{% block content %}
+  {% include "cover_page.html" %}
+  {% for day in days %}
+    {% include "day_page.html" %}
+  {% endfor %}
+  {% include "notes_page.html" %}
+{% endblock %}

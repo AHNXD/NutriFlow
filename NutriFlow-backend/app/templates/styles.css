@@ -1,0 +1,255 @@
+/* NutriFlow plan PDF — RTL, Cairo font embedded locally so WeasyPrint never
+   needs network access at generation time (spec §6). */
+
+@font-face {
+  font-family: "Cairo";
+  src: url("../fonts/Cairo-Variable.ttf");
+  font-weight: 200 1000;
+}
+
+:root {
+  --emerald: #0f9d75;
+  --teal: #14b8a6;
+  --emerald-dark: #0b6e54;
+  --ink: #1f2937;
+  --muted: #6b7280;
+  --bg-soft: #f3faf8;
+  --border: #e2e8e6;
+}
+
+@page {
+  size: A4;
+  margin: 0;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  /* Without an explicit height here, `.page`'s `min-height: 100%` (and the
+     `.cover`/`.closing` `height: 100%`) has nothing to resolve against and
+     silently collapses to content height — which left the cover/closing
+     gradient only covering their text instead of the full printed page. */
+  height: 100%;
+}
+
+body {
+  font-family: "Cairo", sans-serif;
+  color: var(--ink);
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.page {
+  page-break-after: always;
+  padding: 28px 34px;
+  position: relative;
+  min-height: 100%;
+}
+
+.page:last-child {
+  page-break-after: auto;
+}
+
+h1, h2, h3 {
+  margin: 0 0 8px 0;
+  font-weight: 700;
+}
+
+.brand-gradient {
+  background: linear-gradient(135deg, var(--emerald), var(--teal));
+  color: #fff;
+}
+
+/* ---------- Cover page ---------- */
+/* Vertical centering via flex `justify-content` (main axis) — deliberately
+   NOT `align-items: center` (cross axis): combined with `dir="rtl"`,
+   WeasyPrint's flex cross-axis centering pushed this text off the right
+   edge of the page. `align-items: stretch` (the default) plus `text-align:
+   center` on the children sidesteps that bug while still centering. */
+.cover {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
+  height: 100%;
+  padding: 0;
+}
+
+.cover .cover-title {
+  font-size: 30px;
+  font-weight: 800;
+  margin-bottom: 6px;
+}
+
+.cover .cover-sub {
+  font-size: 15px;
+  opacity: 0.92;
+}
+
+.cover .cover-meta {
+  margin-top: 48px;
+  background: rgba(255, 255, 255, 0.14);
+  border-radius: 16px;
+  padding: 20px 32px;
+  font-size: 14px;
+}
+
+.cover .cover-meta div {
+  margin: 4px 0;
+}
+
+/* ---------- Section header shared by non-cover pages ---------- */
+.page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 3px solid var(--emerald);
+  padding-bottom: 10px;
+  margin-bottom: 18px;
+}
+
+.page-header .eyebrow {
+  color: var(--emerald-dark);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.page-header .title {
+  font-size: 20px;
+  font-weight: 800;
+}
+
+/* ---------- Day page ---------- */
+.motivational-banner {
+  border-radius: 12px;
+  padding: 12px 16px;
+  margin-bottom: 16px;
+  font-weight: 700;
+  text-align: center;
+}
+
+.meals-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 14px;
+}
+
+.meal-card {
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 14px;
+  break-inside: avoid;
+}
+
+.meal-card .meal-type {
+  display: inline-block;
+  color: #fff;
+  background: var(--emerald);
+  border-radius: 999px;
+  padding: 2px 12px;
+  font-size: 11px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.meal-card .meal-name {
+  font-size: 15px;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+.meal-card .meal-photo {
+  width: 100%;
+  height: 100px;
+  object-fit: cover;
+  border-radius: 10px;
+  margin-bottom: 8px;
+  background: var(--bg-soft);
+}
+
+.meal-card ul {
+  margin: 0;
+  padding-inline-start: 18px;
+}
+
+.meal-card .meal-tip {
+  margin-top: 8px;
+  font-size: 11px;
+  color: var(--emerald-dark);
+  background: var(--bg-soft);
+  border-radius: 8px;
+  padding: 6px 8px;
+}
+
+/* ---------- Lists (allowed / forbidden / supplements / drinks) ---------- */
+.list-section {
+  margin-bottom: 18px;
+}
+
+.list-section h3 {
+  color: var(--emerald-dark);
+  font-size: 14px;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 4px;
+}
+
+.chip-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.chip {
+  border-radius: 999px;
+  padding: 3px 12px;
+  font-size: 12px;
+  border: 1px solid var(--border);
+}
+
+.chip.allowed {
+  background: #ecfdf5;
+  border-color: #a7f3d0;
+  color: #065f46;
+}
+
+.chip.forbidden {
+  background: #fef2f2;
+  border-color: #fecaca;
+  color: #991b1b;
+}
+
+table.simple-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+
+table.simple-table th,
+table.simple-table td {
+  border: 1px solid var(--border);
+  padding: 6px 10px;
+  text-align: right;
+}
+
+table.simple-table th {
+  background: var(--bg-soft);
+}
+
+/* Same centering approach as `.cover` — see note above. */
+.closing {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
+  height: 100%;
+}
+
+.closing .closing-text {
+  font-size: 22px;
+  font-weight: 800;
+  max-width: 70%;
+  margin: 0 auto;
+}

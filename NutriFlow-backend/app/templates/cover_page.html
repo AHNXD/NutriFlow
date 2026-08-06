@@ -1,0 +1,13 @@
+<div class="page cover brand-gradient">
+  <div class="cover-title">الخطة الغذائية الأسبوعية</div>
+  <div class="cover-sub">مُعدّة خصيصًا لك</div>
+
+  <div class="cover-meta">
+    <div><strong>المريضة:</strong> {{ plan.patient_name }}</div>
+    <div><strong>الأخصائية:</strong> {{ plan.dietitian_name }}</div>
+    <div><strong>مدة الخطة:</strong> {{ plan.duration_days }} أيام</div>
+    {% if plan.fasting_hours %}
+    <div><strong>الصيام المتقطع:</strong> {{ plan.fasting_hours }} ساعة</div>
+    {% endif %}
+  </div>
+</div>

@@ -1,0 +1,46 @@
+{% set meal_labels = {
+  "breakfast": "فطور",
+  "lunch": "غداء",
+  "dinner": "عشاء",
+  "salad": "سلطة",
+  "snack": "سناك"
+} %}
+<div class="page">
+  <div class="page-header">
+    <div>
+      <div class="eyebrow">NutriFlow</div>
+      <div class="title">اليوم {{ day.day_number }}</div>
+    </div>
+    <div class="eyebrow">{{ plan.patient_name }}</div>
+  </div>
+
+  {% if day.motivational_text %}
+  <div class="motivational-banner brand-gradient">{{ day.motivational_text }}</div>
+  {% endif %}
+
+  <div class="meals-grid">
+    {% for meal in day.meals %}
+    {% set name = meal.custom_name or (meal.recipe.name if meal.recipe else None) %}
+    {% set ingredients = meal.custom_ingredients if meal.custom_ingredients is not none else (meal.recipe.ingredients if meal.recipe else []) %}
+    <div class="meal-card">
+      <span class="meal-type">{{ meal_labels.get(meal.meal_type, meal.meal_type) }}</span>
+      {% if meal.recipe and meal.recipe.image_url %}
+      <img class="meal-photo" src="{{ meal.recipe.image_url }}" />
+      {% endif %}
+      <div class="meal-name">{{ name or "—" }}</div>
+      {% if ingredients %}
+      <ul>
+        {% for ing in ingredients %}
+        <li>{{ ing.item }}{% if ing.amount %} — {{ ing.amount }} {{ ing.unit }}{% endif %}</li>
+        {% endfor %}
+      </ul>
+      {% endif %}
+      {% if meal.recipe and meal.recipe.tip %}
+      <div class="meal-tip">💡 {{ meal.recipe.tip }}</div>
+      {% endif %}
+    </div>
+    {% else %}
+    <div class="meal-card">لم تُضَف وجبات لهذا اليوم بعد.</div>
+    {% endfor %}
+  </div>
+</div>
