@@ -28,10 +28,15 @@ State is managed with Riverpod (`lib/providers`); data access lives in
 
    ```bash
    flutter run \
-     --dart-define=SUPABASE_URL=https://fxfambjealokclkrbmaq.supabase.co \
-     --dart-define=SUPABASE_ANON_KEY=sb_publishable_s4k3LVhcwPHbbLhxkq5MxA_zKN_KBWo \
+     --dart-define=SUPABASE_URL=https://xxxx.supabase.co \
+     --dart-define=SUPABASE_ANON_KEY=your-anon-or-publishable-key \
      --dart-define=PDF_SERVICE_URL=https://your-pdf-service.onrender.com
    ```
+
+   Don't put real values directly in this file or commit them anywhere —
+   see the `dart_define.txt` approach right below. RLS in
+   `supabase/schema.sql` is permissive for v1, so this key currently grants
+   full read/write access to the whole database to anyone who has it.
 
    `PDF_SERVICE_URL` is optional while developing — the PDF export button
    will just show a "not configured yet" message without it.

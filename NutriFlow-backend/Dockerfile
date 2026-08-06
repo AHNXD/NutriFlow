@@ -1,4 +1,8 @@
-FROM python:3.12-slim
+FROM python:3.12-slim-bookworm
+# Pinned to Debian 12 (bookworm), not the floating `python:3.12-slim` tag —
+# that tag recently moved to Debian 13 (trixie), which renamed
+# libgdk-pixbuf2.0-0 to libgdk-pixbuf-2.0-0 and broke this build. Pinning
+# avoids chasing renamed packages again on the next Debian bump.
 
 # WeasyPrint needs Pango/Cairo/GDK-Pixbuf at the OS level — these aren't
 # pip-installable. See https://doc.courtbouillon.org/weasyprint/stable/first_steps.html#linux

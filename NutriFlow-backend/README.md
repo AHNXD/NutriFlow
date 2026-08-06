@@ -62,15 +62,97 @@ bundled so PDF generation never depends on network access, per spec §6.
 
 ## Deploying to Render (free tier)
 
-1. New Web Service → point at this repo/subfolder, or push the
-   included `Dockerfile`.
-2. Set env vars `SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY` in the Render
-   dashboard (never commit `.env`).
-3. Render sets `$PORT` automatically — the Dockerfile's CMD already reads it.
-4. Point the Flutter app's `PDF_SERVICE_URL` dart-define at the resulting
-   `https://<name>.onrender.com` URL.
-5. Add an n8n workflow that pings `/health` (and the Supabase REST root)
-   every 24-48h so the free instance doesn't spin down / pause.
+Render builds this service from the `Dockerfile` in this folder — that's
+what pulls in WeasyPrint's system libraries (Pango/Cairo/GDK-Pixbuf), which
+a plain "Python" buildpack can't install. Deploys come from a connected Git
+repo, so the code needs to be on GitHub/GitLab/Bitbucket first.
+
+**1. Push the code, if you haven't.** NutriFlow-backend lives inside the
+same repo as the Flutter app (a monorepo) — that's fine, Render lets you
+point a service at a subfolder (step 4 below).
+
+```bash
+git push origin main
+```
+
+**2. Create a Render account and connect GitHub.** Go to
+[render.com](https://render.com), sign up (GitHub login is easiest — it
+handles the connection for you), and if asked, grant Render access to
+either all repos or just this one (`AHNXD/NutriFlow`).
+
+**3. Start a new Web Service.** From the Render dashboard: **New +** (top
+right) → **Web Service**. Pick the `NutriFlow` repo from the list — if it's
+not there, click "Configure account" to adjust which repos Render can see.
+
+**4. Configure the service:**
+
+| Field | Value |
+|---|---|
+| Name | `nutriflow-pdf` (or anything — this becomes part of the URL) |
+| Root Directory | `NutriFlow-backend` — **important**: without this, Render tries to build from the repo root and won't find the Dockerfile |
+| Region | whichever is closest to you/the dietitian |
+| Branch | `main` |
+| Language/Runtime | **Docker** — Render should auto-detect the `Dockerfile` once Root Directory is set correctly; if it instead offers a "Python 3" runtime, switch it to Docker manually |
+| Instance Type | **Free** |
+
+**5. Add environment variables.** Still on the same creation screen, under
+"Environment Variables" (or Advanced → Add Environment Variable), add:
+
+- `SUPABASE_URL` — your project URL.
+- `SUPABASE_SERVICE_ROLE_KEY` — from the Supabase dashboard: **Project
+  Settings → API Keys**. Grab the **service_role** key (shown as `secret`
+  / `sb_secret_...` on newer Supabase projects, or listed under "Legacy API
+  keys" as `service_role` on older ones). This is *not* the same key the
+  Flutter app uses — it bypasses RLS entirely, so it only ever belongs
+  here, never in the app or in git.
+
+**6. Create Web Service.** Render clones the repo, builds the Docker image
+(expect several minutes the first time — installing the apt packages plus
+`pip install -r requirements.txt` isn't instant), and deploys it. Watch
+progress in the **Logs** tab; a successful deploy ends with something like
+`Uvicorn running on http://0.0.0.0:$PORT`. You don't need to set `PORT`
+yourself — Render injects it and the Dockerfile's `CMD` already reads it.
+
+**7. Verify it's actually up.** Render gives you a URL shaped like
+`https://nutriflow-pdf.onrender.com`. Test the health check first (fast,
+no Supabase round-trip):
+
+```bash
+curl https://nutriflow-pdf.onrender.com/health
+# {"status":"ok"}
+```
+
+Then a real PDF, once you have at least one plan in the database:
+
+```bash
+curl -X POST https://nutriflow-pdf.onrender.com/generate-plan-pdf \
+  -H "Content-Type: application/json" \
+  -d '{"plan_id": "<uuid-from-plans-table>"}' \
+  -o test-plan.pdf
+```
+
+**8. Point the Flutter app at it.** Add `--dart-define=PDF_SERVICE_URL=https://nutriflow-pdf.onrender.com`
+to however you run/build the app (see `../nutri_flow/README.md`).
+
+**9. Know the free-tier trade-offs** (two separate things, easy to conflate):
+
+- **Render**: a free Web Service spins down after ~15 minutes with no
+  incoming requests, and the *next* request pays a cold-start cost (often
+  30-60s) while it spins back up. There's no free-tier way around this
+  short of upgrading to a paid instance — an occasional keep-alive ping
+  does not prevent it, since 15 minutes is a short window to keep pinging
+  against. In practice this just means: the first PDF export after a
+  while feels slow, subsequent ones are fast. Worth telling the dietitian
+  this up front so it doesn't look broken.
+- **Supabase**: a free project pauses after **7 days** of no API activity
+  (different mechanism, different timescale). *This* is what the n8n
+  keep-alive workflow in spec §2/§7 is actually for — an HTTP Request node
+  hitting this service's `/health` (or any Supabase REST endpoint) every
+  24-48h keeps the Supabase project active. It won't do anything for
+  Render's 15-minute spin-down.
+
+**10. Redeploys.** Render auto-deploys on every push to `main` by default
+(toggle under the service's Settings if you'd rather deploy manually).
 
 ## Status
 
