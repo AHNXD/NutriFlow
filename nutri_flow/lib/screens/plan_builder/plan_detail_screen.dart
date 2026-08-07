@@ -30,8 +30,20 @@ class _PlanDetailScreenState extends ConsumerState<PlanDetailScreen> {
       final dir = await getTemporaryDirectory();
       final file = File('${dir.path}/nutriflow-plan-${widget.planId}.pdf');
       await file.writeAsBytes(bytes);
+      if (!mounted) return;
+      // macOS/iPad present the share sheet as a popover, which requires an
+      // anchor rect (sharePositionOrigin) — omitting it throws
+      // PlatformException("sharePositionOrigin: argument must be set...").
+      // iPhone/Android ignore this and always show a full sheet, so it's
+      // safe to pass on every platform.
+      final box = context.findRenderObject() as RenderBox?;
+      final origin = box != null ? box.localToGlobal(Offset.zero) & box.size : null;
       await SharePlus.instance.share(
-        ShareParams(files: [XFile(file.path)], text: 'خطة غذائية — NutriFlow'),
+        ShareParams(
+          files: [XFile(file.path)],
+          text: 'خطة غذائية — NutriFlow',
+          sharePositionOrigin: origin,
+        ),
       );
     } on PdfServiceNotConfiguredException {
       if (mounted) {
