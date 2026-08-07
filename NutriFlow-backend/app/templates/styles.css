@@ -43,7 +43,6 @@ body {
   padding: 30px 36px;
   position: relative;
   min-height: 100%;
-  overflow: hidden;
 }
 
 .page:last-child {
@@ -246,10 +245,19 @@ h1, h2, h3 {
   margin-inline-end: 4px;
 }
 
+/* Plain CSS floats, not flex/grid — WeasyPrint's pagination of a
+   multi-row flex/grid container that overflows a page turned out to be
+   unreliable (cards mis-sized, and in one case the whole rest of the
+   document failed to paginate past the first day). Floats are the
+   oldest, most conservative CSS layout tool and paginate correctly. */
 .meals-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 16px;
+  overflow: hidden;
+}
+
+.meals-grid .meal-card {
+  float: right;
+  width: 48%;
+  margin-bottom: 16px;
 }
 
 .meal-card {
@@ -274,7 +282,6 @@ h1, h2, h3 {
 .meal-card .meal-head {
   display: flex;
   align-items: center;
-  gap: 10px;
   margin-bottom: 10px;
 }
 
@@ -290,6 +297,7 @@ h1, h2, h3 {
   display: flex;
   align-items: center;
   justify-content: center;
+  margin-inline-end: 10px;
 }
 
 .meal-card .meal-type {
