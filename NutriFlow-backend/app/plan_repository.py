@@ -7,6 +7,7 @@ of truth on columns.
 from __future__ import annotations
 
 from . import supabase_rest as db
+from .themes import get_theme
 
 
 class PlanNotFoundError(Exception):
@@ -59,8 +60,22 @@ async def get_plan_pdf_context(plan_id: str) -> dict:
     allowed = [f for f in food_lists if f["list_type"] == "allowed"]
     forbidden = [f for f in food_lists if f["list_type"] == "forbidden"]
 
+    # Single-row table (spec follow-up: dietitian's own logo + name shown on
+    # every exported plan). Deliberately swallow errors here, not just an
+    # empty result: this table (and `plans.theme`) is new, and until the
+    # updated schema.sql migration is applied to a given deployment the
+    # table won't exist at all — that must degrade to "no branding" on the
+    # PDF, not break every export with a 502.
+    try:
+        profile_rows = await db.select("dietitian_profile", {"select": "*", "limit": "1"})
+        profile = profile_rows[0] if profile_rows else {}
+    except db.SupabaseRestError:
+        profile = {}
+
     return {
         "plan": plan,
+        "theme": get_theme(plan.get("theme")),
+        "dietitian": profile,
         "days": days,
         "drinks": drinks,
         "supplements": supplement_links,

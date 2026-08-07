@@ -3,7 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../models/plan.dart';
+import '../../providers/dietitian_profile_providers.dart';
 import '../../providers/plan_providers.dart';
+import '../../widgets/pdf_theme_picker.dart';
 
 class CreatePlanScreen extends ConsumerStatefulWidget {
   const CreatePlanScreen({super.key});
@@ -20,7 +22,9 @@ class _CreatePlanScreenState extends ConsumerState<CreatePlanScreen> {
   final _fastingHoursCtrl = TextEditingController();
   final _fastingNotesCtrl = TextEditingController();
   final _generalNotesCtrl = TextEditingController();
+  String _theme = 'emerald';
   bool _saving = false;
+  bool _dietitianPrefilled = false;
 
   @override
   void dispose() {
@@ -51,6 +55,7 @@ class _CreatePlanScreenState extends ConsumerState<CreatePlanScreen> {
         generalNotes: _generalNotesCtrl.text.trim().isEmpty
             ? null
             : _generalNotesCtrl.text.trim(),
+        theme: _theme,
       );
       final created = await ref.read(planListProvider.notifier).create(plan);
       if (mounted) Navigator.pop(context, created);
@@ -66,6 +71,14 @@ class _CreatePlanScreenState extends ConsumerState<CreatePlanScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // Prefill the dietitian name from her saved profile (Settings) once,
+    // without overwriting anything she's already typed.
+    final profile = ref.watch(dietitianProfileProvider).valueOrNull;
+    if (!_dietitianPrefilled && profile?.name != null && _dietitianCtrl.text.isEmpty) {
+      _dietitianPrefilled = true;
+      _dietitianCtrl.text = profile!.name!;
+    }
+
     return Scaffold(
       appBar: AppBar(title: const Text('خطة جديدة')),
       body: Form(
@@ -114,6 +127,11 @@ class _CreatePlanScreenState extends ConsumerState<CreatePlanScreen> {
               decoration: const InputDecoration(labelText: 'ملاحظات عامة (اختياري)'),
               minLines: 1,
               maxLines: 4,
+            ),
+            const SizedBox(height: 20),
+            PdfThemePicker(
+              selected: _theme,
+              onChanged: (id) => setState(() => _theme = id),
             ),
             const SizedBox(height: 24),
             FilledButton(

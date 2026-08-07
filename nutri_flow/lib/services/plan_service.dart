@@ -42,6 +42,16 @@ class PlanService {
     return Plan.fromMap(row);
   }
 
+  Future<Plan> updateTheme(String planId, String theme) async {
+    final row = await _client
+        .from('plans')
+        .update({'theme': theme})
+        .eq('id', planId)
+        .select()
+        .single();
+    return Plan.fromMap(row);
+  }
+
   Future<List<PlanDay>> fetchPlanDays(String planId) async {
     final rows = await _client
         .from('plan_days')

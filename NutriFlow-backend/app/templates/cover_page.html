@@ -1,13 +1,45 @@
 <div class="page cover brand-gradient">
-  <div class="cover-title">الخطة الغذائية الأسبوعية</div>
-  <div class="cover-sub">مُعدّة خصيصًا لك</div>
+  <div class="deco-blob b1"></div>
+  <div class="deco-blob b2"></div>
+  <div class="deco-blob b3"></div>
 
-  <div class="cover-meta">
-    <div><strong>المريضة:</strong> {{ plan.patient_name }}</div>
-    <div><strong>الأخصائية:</strong> {{ plan.dietitian_name }}</div>
-    <div><strong>مدة الخطة:</strong> {{ plan.duration_days }} أيام</div>
-    {% if plan.fasting_hours %}
-    <div><strong>الصيام المتقطع:</strong> {{ plan.fasting_hours }} ساعة</div>
+  <div class="cover-content">
+    <div class="clinic-badge">
+      {% if dietitian.logo_url %}
+      <img src="{{ dietitian.logo_url }}" />
+      {% else %}
+      <span class="fallback-mark">{{ (dietitian.name or "NF")[:2] }}</span>
+      {% endif %}
+    </div>
+
+    <div class="eyebrow-label">NutriFlow</div>
+    <div class="cover-title">الخطة الغذائية الأسبوعية</div>
+    <div class="cover-title-underline"></div>
+    <div class="cover-sub">مُعدّة خصيصًا لك</div>
+
+    <div class="cover-meta">
+      <div class="meta-row">
+        <span class="meta-label">المريضة</span>
+        <span class="meta-value">{{ plan.patient_name }}</span>
+      </div>
+      <div class="meta-row">
+        <span class="meta-label">الأخصائية</span>
+        <span class="meta-value">{{ plan.dietitian_name }}</span>
+      </div>
+      <div class="meta-row">
+        <span class="meta-label">مدة الخطة</span>
+        <span class="meta-value">{{ plan.duration_days }} أيام</span>
+      </div>
+      {% if plan.fasting_hours %}
+      <div class="meta-row">
+        <span class="meta-label">الصيام المتقطع</span>
+        <span class="meta-value">{{ plan.fasting_hours }} ساعة</span>
+      </div>
+      {% endif %}
+    </div>
+
+    {% if dietitian.name %}
+    <div class="cover-signature">بإعداد {{ dietitian.name }}</div>
     {% endif %}
   </div>
 </div>

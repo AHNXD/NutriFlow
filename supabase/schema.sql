@@ -88,6 +88,19 @@ create table if not exists food_lists (
 );
 create index if not exists idx_food_lists_type on food_lists (list_type);
 
+-- ========== ملف الأخصائية (شعار + اسم يُستخدمان في كل ملفات PDF) ==========
+-- صف واحد فقط (single-user app) — التطبيق يقرأ/يحدّث نفس الصف دائمًا.
+create table if not exists dietitian_profile (
+  id uuid primary key default gen_random_uuid(),
+  name text,
+  logo_url text,
+  created_at timestamptz default now(),
+  updated_at timestamptz default now()
+);
+drop trigger if exists trg_dietitian_profile_updated_at on dietitian_profile;
+create trigger trg_dietitian_profile_updated_at before update on dietitian_profile
+  for each row execute function set_updated_at();
+
 -- ========== الخطة الأسبوعية ==========
 create table if not exists plans (
   id uuid primary key default gen_random_uuid(),
@@ -97,12 +110,20 @@ create table if not exists plans (
   fasting_hours int,                          -- مثال: 16
   fasting_notes text,
   general_notes text,                         -- ملاحظات عامة (البروتين، الوزن، إلخ)
+  -- لون قالب PDF لهذه الخطة — القيم المتاحة معرّفة في NutriFlow-backend/app/themes.py
+  -- ولوحة الألوان في nutri_flow/lib/theme/pdf_themes.dart (يجب أن يبقيا متطابقين).
+  theme text not null default 'emerald',
   created_at timestamptz default now(),
   updated_at timestamptz default now()
 );
 drop trigger if exists trg_plans_updated_at on plans;
 create trigger trg_plans_updated_at before update on plans
   for each row execute function set_updated_at();
+
+-- Migration guard: `create table if not exists` above only helps on a brand
+-- new database — an already-deployed `plans` table needs the column added
+-- explicitly.
+alter table plans add column if not exists theme text not null default 'emerald';
 
 create table if not exists plan_days (
   id uuid primary key default gen_random_uuid(),
@@ -150,7 +171,8 @@ declare
 begin
   foreach t in array array[
     'recipes','tips','motivational_messages','helper_drinks','supplements',
-    'food_lists','plans','plan_days','plan_meals','plan_drinks','plan_supplements'
+    'food_lists','plans','plan_days','plan_meals','plan_drinks','plan_supplements',
+    'dietitian_profile'
   ]
   loop
     execute format('alter table %I enable row level security;', t);
@@ -178,3 +200,19 @@ drop policy if exists "recipe_images_write_v1" on storage.objects;
 -- TIGHTEN LATER alongside the table policies above.
 create policy "recipe_images_write_v1" on storage.objects
   for all using (bucket_id = 'recipe-images') with check (bucket_id = 'recipe-images');
+
+-- ============================================================================
+-- Storage — dietitian's clinic logo
+-- ============================================================================
+insert into storage.buckets (id, name, public)
+values ('dietitian-logo', 'dietitian-logo', true)
+on conflict (id) do nothing;
+
+drop policy if exists "dietitian_logo_public_read" on storage.objects;
+create policy "dietitian_logo_public_read" on storage.objects
+  for select using (bucket_id = 'dietitian-logo');
+
+drop policy if exists "dietitian_logo_write_v1" on storage.objects;
+-- TIGHTEN LATER alongside the table policies above.
+create policy "dietitian_logo_write_v1" on storage.objects
+  for all using (bucket_id = 'dietitian-logo') with check (bucket_id = 'dietitian-logo');

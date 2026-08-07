@@ -6,6 +6,7 @@ class Plan {
   final int? fastingHours;
   final String? fastingNotes;
   final String? generalNotes;
+  final String theme;
   final DateTime? createdAt;
 
   const Plan({
@@ -16,6 +17,7 @@ class Plan {
     this.fastingHours,
     this.fastingNotes,
     this.generalNotes,
+    this.theme = 'emerald',
     this.createdAt,
   });
 
@@ -27,6 +29,7 @@ class Plan {
         fastingHours: (map['fasting_hours'] as num?)?.toInt(),
         fastingNotes: map['fasting_notes'] as String?,
         generalNotes: map['general_notes'] as String?,
+        theme: map['theme'] as String? ?? 'emerald',
         createdAt: map['created_at'] != null
             ? DateTime.tryParse(map['created_at'] as String)
             : null,
@@ -39,5 +42,6 @@ class Plan {
         'fasting_hours': fastingHours,
         'fasting_notes': fastingNotes,
         'general_notes': generalNotes,
+        'theme': theme,
       };
 }

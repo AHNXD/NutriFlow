@@ -3,7 +3,7 @@
   <div class="page-header">
     <div>
       <div class="eyebrow">NutriFlow</div>
-      <div class="title">تعليمات النظام</div>
+      <div class="title"><span class="title-icon">ت</span>تعليمات النظام</div>
     </div>
     <div class="eyebrow">{{ plan.patient_name }}</div>
   </div>
@@ -29,7 +29,7 @@
   <div class="page-header">
     <div>
       <div class="eyebrow">NutriFlow</div>
-      <div class="title">المسموح والممنوع</div>
+      <div class="title"><span class="title-icon">م</span>المسموح والممنوع</div>
     </div>
     <div class="eyebrow">{{ plan.patient_name }}</div>
   </div>
@@ -60,7 +60,7 @@
   <div class="page-header">
     <div>
       <div class="eyebrow">NutriFlow</div>
-      <div class="title">المكملات الغذائية</div>
+      <div class="title"><span class="title-icon">ك</span>المكملات الغذائية</div>
     </div>
     <div class="eyebrow">{{ plan.patient_name }}</div>
   </div>
@@ -91,7 +91,7 @@
   <div class="page-header">
     <div>
       <div class="eyebrow">NutriFlow</div>
-      <div class="title">المشروبات المساعدة</div>
+      <div class="title"><span class="title-icon">ش</span>المشروبات المساعدة</div>
     </div>
     <div class="eyebrow">{{ plan.patient_name }}</div>
   </div>
@@ -116,5 +116,13 @@
 
 <!-- صفحة ختامية تحفيزية -->
 <div class="page closing brand-gradient">
-  <div class="closing-text">أنتِ أقوى مما تتخيلين — استمري 💪</div>
+  <div class="deco-blob b1"></div>
+  <div class="deco-blob b2"></div>
+  <div class="closing-content">
+    <div class="cover-title-underline"></div>
+    <div class="closing-text">أنتِ أقوى مما تتخيلين — استمري</div>
+    {% if dietitian.name %}
+    <div class="closing-signature">بإعداد {{ dietitian.name }}</div>
+    {% endif %}
+  </div>
 </div>

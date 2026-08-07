@@ -55,12 +55,13 @@ class PlanDetailState {
   });
 
   PlanDetailState copyWith({
+    Plan? plan,
     List<PlanDay>? days,
     List<String>? drinkIds,
     List<PlanSupplement>? supplements,
   }) =>
       PlanDetailState(
-        plan: plan,
+        plan: plan ?? this.plan,
         days: days ?? this.days,
         drinkIds: drinkIds ?? this.drinkIds,
         supplements: supplements ?? this.supplements,
@@ -106,6 +107,13 @@ class PlanDetailNotifier extends FamilyAsyncNotifier<PlanDetailState, String> {
   Future<void> refresh() async {
     state = const AsyncLoading();
     state = await AsyncValue.guard(_load);
+  }
+
+  Future<void> updateTheme(String theme) async {
+    final updated = await _service.updateTheme(_planId, theme);
+    final current = state.valueOrNull;
+    if (current == null) return;
+    state = AsyncData(current.copyWith(plan: updated));
   }
 
   Future<void> setDayMotivationalText(String dayId, String? text) async {

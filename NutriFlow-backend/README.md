@@ -46,6 +46,19 @@ not find the Homebrew libs on its own (`OSError: cannot load library
 DYLD_FALLBACK_LIBRARY_PATH="/opt/homebrew/lib" uvicorn app.main:app --reload
 ```
 
+**"SSL: CERTIFICATE_VERIFY_FAILED" when a recipe/logo image is fetched:**
+python.org's macOS installer doesn't register Python with the system CA
+store, so WeasyPrint's own image fetch (not `httpx`, which uses `certifi`
+regardless) can't verify HTTPS certs. Fix by pointing Python at `certifi`'s
+bundle:
+
+```bash
+SSL_CERT_FILE="$(python -c 'import certifi; print(certifi.where())')" uvicorn app.main:app --reload
+```
+
+This only affects local runs on a python.org-installed interpreter — Render's
+container doesn't have this problem.
+
 Try it once you have at least one plan in the database:
 
 ```bash

@@ -7,6 +7,7 @@ import 'package:share_plus/share_plus.dart';
 
 import '../../providers/plan_providers.dart';
 import '../../services/pdf_export_service.dart';
+import '../../widgets/pdf_theme_picker.dart';
 import 'day_builder_view.dart';
 import 'plan_extras_view.dart';
 
@@ -22,6 +23,36 @@ class PlanDetailScreen extends ConsumerStatefulWidget {
 
 class _PlanDetailScreenState extends ConsumerState<PlanDetailScreen> {
   bool _exporting = false;
+
+  Future<void> _pickTheme(String currentTheme) async {
+    final notifier = ref.read(planDetailProvider(widget.planId).notifier);
+    var selected = currentTheme;
+    await showDialog<void>(
+      context: context,
+      builder: (context) => StatefulBuilder(
+        builder: (context, setDialogState) => AlertDialog(
+          title: const Text('لون قالب PDF'),
+          content: SizedBox(
+            width: 320,
+            child: PdfThemePicker(
+              selected: selected,
+              onChanged: (id) => setDialogState(() => selected = id),
+            ),
+          ),
+          actions: [
+            TextButton(onPressed: () => Navigator.pop(context), child: const Text('إلغاء')),
+            FilledButton(
+              onPressed: () {
+                notifier.updateTheme(selected);
+                Navigator.pop(context);
+              },
+              child: const Text('حفظ'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 
   Future<void> _exportPdf() async {
     setState(() => _exporting = true);
@@ -79,6 +110,11 @@ class _PlanDetailScreenState extends ConsumerState<PlanDetailScreen> {
             appBar: AppBar(
               title: Text(state.plan.patientName),
               actions: [
+                IconButton(
+                  tooltip: 'لون قالب PDF',
+                  onPressed: () => _pickTheme(state.plan.theme),
+                  icon: const Icon(Icons.palette_outlined),
+                ),
                 IconButton(
                   tooltip: 'تصدير PDF',
                   onPressed: _exporting ? null : _exportPdf,

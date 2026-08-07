@@ -1,5 +1,9 @@
 /* NutriFlow plan PDF — RTL, Cairo font embedded locally so WeasyPrint never
-   needs network access at generation time (spec §6). */
+   needs network access at generation time (spec §6).
+
+   Colors are theme-aware: --primary/--secondary/--dark/--soft are set by an
+   inline <style> block in base.html from the plan's chosen theme (see
+   app/themes.py) — nothing here should hardcode a specific color. */
 
 @font-face {
   font-family: "Cairo";
@@ -8,12 +12,8 @@
 }
 
 :root {
-  --emerald: #0f9d75;
-  --teal: #14b8a6;
-  --emerald-dark: #0b6e54;
   --ink: #1f2937;
   --muted: #6b7280;
-  --bg-soft: #f3faf8;
   --border: #e2e8e6;
 }
 
@@ -27,10 +27,6 @@
 }
 
 html, body {
-  /* Without an explicit height here, `.page`'s `min-height: 100%` (and the
-     `.cover`/`.closing` `height: 100%`) has nothing to resolve against and
-     silently collapses to content height — which left the cover/closing
-     gradient only covering their text instead of the full printed page. */
   height: 100%;
 }
 
@@ -44,9 +40,10 @@ body {
 
 .page {
   page-break-after: always;
-  padding: 28px 34px;
+  padding: 30px 36px;
   position: relative;
   min-height: 100%;
+  overflow: hidden;
 }
 
 .page:last-child {
@@ -59,16 +56,20 @@ h1, h2, h3 {
 }
 
 .brand-gradient {
-  background: linear-gradient(135deg, var(--emerald), var(--teal));
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
   color: #fff;
 }
 
+/* Soft translucent circles layered on gradient pages for visual texture —
+   purely decorative, pointer-events/print-only, no effect on layout. */
+.deco-blob {
+  position: absolute;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0) 70%);
+  pointer-events: none;
+}
+
 /* ---------- Cover page ---------- */
-/* Vertical centering via flex `justify-content` (main axis) — deliberately
-   NOT `align-items: center` (cross axis): combined with `dir="rtl"`,
-   WeasyPrint's flex cross-axis centering pushed this text off the right
-   edge of the page. `align-items: stretch` (the default) plus `text-align:
-   center` on the children sidesteps that bug while still centering. */
 .cover {
   display: flex;
   flex-direction: column;
@@ -78,10 +79,65 @@ h1, h2, h3 {
   padding: 0;
 }
 
+.cover .deco-blob.b1 { width: 320px; height: 320px; top: -120px; right: -100px; }
+.cover .deco-blob.b2 { width: 240px; height: 240px; bottom: -80px; left: -60px; }
+.cover .deco-blob.b3 { width: 140px; height: 140px; bottom: 18%; right: 8%; opacity: 0.6; }
+
+.cover-content {
+  position: relative;
+  z-index: 1;
+}
+
+.clinic-badge {
+  width: 96px;
+  height: 96px;
+  margin: 0 auto 18px auto;
+  border-radius: 26px;
+  background: #fff;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.18);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.clinic-badge img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  padding: 10px;
+}
+
+.clinic-badge .fallback-mark {
+  font-size: 34px;
+  font-weight: 800;
+  color: var(--primary);
+}
+
+.cover .eyebrow-label {
+  display: inline-block;
+  letter-spacing: 2px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 999px;
+  padding: 5px 16px;
+  margin-bottom: 14px;
+}
+
 .cover .cover-title {
-  font-size: 30px;
+  font-size: 32px;
   font-weight: 800;
   margin-bottom: 6px;
+}
+
+.cover .cover-title-underline {
+  width: 64px;
+  height: 4px;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.85);
+  margin: 10px auto 4px auto;
 }
 
 .cover .cover-sub {
@@ -90,15 +146,40 @@ h1, h2, h3 {
 }
 
 .cover .cover-meta {
-  margin-top: 48px;
-  background: rgba(255, 255, 255, 0.14);
-  border-radius: 16px;
-  padding: 20px 32px;
+  margin-top: 42px;
+  background: rgba(255, 255, 255, 0.16);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 18px;
+  padding: 22px 30px;
   font-size: 14px;
+  display: inline-block;
+  min-width: 320px;
 }
 
-.cover .cover-meta div {
-  margin: 4px 0;
+.cover-meta .meta-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 7px 4px;
+}
+
+.cover-meta .meta-row + .meta-row {
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.cover-meta .meta-label {
+  opacity: 0.85;
+}
+
+.cover-meta .meta-value {
+  font-weight: 700;
+}
+
+.cover-signature {
+  margin-top: 34px;
+  font-size: 12px;
+  opacity: 0.9;
 }
 
 /* ---------- Section header shared by non-cover pages ---------- */
@@ -106,107 +187,212 @@ h1, h2, h3 {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  border-bottom: 3px solid var(--emerald);
-  padding-bottom: 10px;
-  margin-bottom: 18px;
+  padding-bottom: 12px;
+  margin-bottom: 20px;
+  border-bottom: 3px solid var(--primary);
+  position: relative;
+}
+
+.page-header::after {
+  content: "";
+  position: absolute;
+  bottom: -3px;
+  right: 0;
+  width: 64px;
+  height: 3px;
+  background: var(--secondary);
 }
 
 .page-header .eyebrow {
-  color: var(--emerald-dark);
+  color: var(--dark);
   font-size: 12px;
   font-weight: 700;
 }
 
 .page-header .title {
-  font-size: 20px;
+  font-size: 21px;
   font-weight: 800;
+}
+
+.page-header .title-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  color: #fff;
+  font-weight: 800;
+  font-size: 15px;
+  margin-inline-end: 8px;
+  vertical-align: middle;
 }
 
 /* ---------- Day page ---------- */
 .motivational-banner {
-  border-radius: 12px;
-  padding: 12px 16px;
-  margin-bottom: 16px;
+  border-radius: 14px;
+  padding: 14px 20px;
+  margin-bottom: 20px;
   font-weight: 700;
   text-align: center;
+  position: relative;
+}
+
+.motivational-banner .quote-mark {
+  font-size: 22px;
+  font-weight: 800;
+  opacity: 0.7;
+  margin-inline-end: 4px;
 }
 
 .meals-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 14px;
+  gap: 16px;
 }
 
 .meal-card {
   border: 1px solid var(--border);
-  border-radius: 14px;
-  padding: 14px;
+  border-radius: 16px;
+  padding: 16px 16px 14px 16px;
   break-inside: avoid;
+  position: relative;
+  overflow: hidden;
+}
+
+.meal-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  height: 5px;
+  background: linear-gradient(90deg, var(--primary), var(--secondary));
+}
+
+.meal-card .meal-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.meal-badge {
+  flex: 0 0 auto;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  color: #fff;
+  font-size: 12px;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .meal-card .meal-type {
-  display: inline-block;
-  color: #fff;
-  background: var(--emerald);
-  border-radius: 999px;
-  padding: 2px 12px;
   font-size: 11px;
   font-weight: 700;
-  margin-bottom: 8px;
+  color: var(--dark);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.meal-card .meal-photo {
+  width: 100%;
+  height: 108px;
+  object-fit: cover;
+  border-radius: 12px;
+  margin-bottom: 10px;
+  background: var(--soft);
 }
 
 .meal-card .meal-name {
   font-size: 15px;
   font-weight: 700;
-  margin-bottom: 6px;
-}
-
-.meal-card .meal-photo {
-  width: 100%;
-  height: 100px;
-  object-fit: cover;
-  border-radius: 10px;
   margin-bottom: 8px;
-  background: var(--bg-soft);
 }
 
 .meal-card ul {
   margin: 0;
-  padding-inline-start: 18px;
+  padding-inline-start: 0;
+  list-style: none;
+}
+
+.meal-card ul li {
+  padding-inline-start: 14px;
+  position: relative;
+  margin-bottom: 3px;
+}
+
+.meal-card ul li::before {
+  content: "";
+  position: absolute;
+  inline-size: 6px;
+  block-size: 6px;
+  border-radius: 50%;
+  background: var(--secondary);
+  inset-inline-start: 0;
+  top: 6px;
 }
 
 .meal-card .meal-tip {
-  margin-top: 8px;
+  margin-top: 10px;
   font-size: 11px;
-  color: var(--emerald-dark);
-  background: var(--bg-soft);
-  border-radius: 8px;
-  padding: 6px 8px;
+  color: var(--dark);
+  background: var(--soft);
+  border-radius: 10px;
+  padding: 8px 10px;
+  border-inline-start: 3px solid var(--secondary);
 }
 
 /* ---------- Lists (allowed / forbidden / supplements / drinks) ---------- */
 .list-section {
-  margin-bottom: 18px;
+  margin-bottom: 20px;
 }
 
 .list-section h3 {
-  color: var(--emerald-dark);
+  color: var(--dark);
   font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
   border-bottom: 1px solid var(--border);
-  padding-bottom: 4px;
+  padding-bottom: 6px;
+}
+
+.list-section h3::before {
+  content: "";
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--primary);
 }
 
 .chip-list {
   display: flex;
   flex-wrap: wrap;
-  gap: 6px;
+  gap: 7px;
 }
 
 .chip {
   border-radius: 999px;
-  padding: 3px 12px;
+  padding: 4px 13px;
   font-size: 12px;
   border: 1px solid var(--border);
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  white-space: nowrap;
+}
+
+.chip::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
 }
 
 .chip.allowed {
@@ -214,31 +400,37 @@ h1, h2, h3 {
   border-color: #a7f3d0;
   color: #065f46;
 }
+.chip.allowed::before { background: #10b981; }
 
 .chip.forbidden {
   background: #fef2f2;
   border-color: #fecaca;
   color: #991b1b;
 }
+.chip.forbidden::before { background: #ef4444; }
 
 table.simple-table {
   width: 100%;
   border-collapse: collapse;
   font-size: 12px;
+  border-radius: 12px;
+  overflow: hidden;
 }
 
 table.simple-table th,
 table.simple-table td {
   border: 1px solid var(--border);
-  padding: 6px 10px;
+  padding: 8px 12px;
   text-align: right;
 }
 
 table.simple-table th {
-  background: var(--bg-soft);
+  background: var(--soft);
+  color: var(--dark);
+  font-weight: 700;
 }
 
-/* Same centering approach as `.cover` — see note above. */
+/* ---------- Closing page ---------- */
 .closing {
   display: flex;
   flex-direction: column;
@@ -247,9 +439,23 @@ table.simple-table th {
   height: 100%;
 }
 
+.closing .deco-blob.b1 { width: 280px; height: 280px; top: -100px; left: -80px; }
+.closing .deco-blob.b2 { width: 220px; height: 220px; bottom: -100px; right: -60px; }
+
+.closing-content {
+  position: relative;
+  z-index: 1;
+}
+
 .closing .closing-text {
-  font-size: 22px;
+  font-size: 24px;
   font-weight: 800;
-  max-width: 70%;
+  max-width: 72%;
   margin: 0 auto;
+}
+
+.closing .closing-signature {
+  margin-top: 40px;
+  font-size: 13px;
+  opacity: 0.9;
 }

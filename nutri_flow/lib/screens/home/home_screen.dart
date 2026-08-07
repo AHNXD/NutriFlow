@@ -5,6 +5,7 @@ import '../drinks_bank/drinks_bank_screen.dart';
 import '../food_lists/food_lists_screen.dart';
 import '../plan_builder/plans_list_screen.dart';
 import '../recipe_bank/recipe_bank_screen.dart';
+import '../settings/settings_screen.dart';
 import '../supplements_bank/supplements_bank_screen.dart';
 import '../tips_bank/tips_bank_screen.dart';
 
@@ -89,22 +90,49 @@ class _Header extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.fromLTRB(20, 56, 20, 28),
       decoration: const BoxDecoration(gradient: AppColors.gradient),
-      child: Column(
+      child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            'NutriFlow',
-            style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                  color: Colors.white,
-                  fontWeight: FontWeight.w800,
-                ),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(14),
+            child: Container(
+              width: 52,
+              height: 52,
+              color: Colors.white,
+              padding: const EdgeInsets.all(4),
+              child: Image.asset('assets/images/logo.png', fit: BoxFit.contain),
+            ),
           ),
-          const SizedBox(height: 4),
-          Text(
-            'بنوك الأكلات والخطط الغذائية — كل شيء بمكان واحد',
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: Colors.white.withValues(alpha: 0.9),
+          const SizedBox(width: 14),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'NutriFlow',
+                  style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w800,
+                      ),
                 ),
+                const SizedBox(height: 4),
+                Text(
+                  'بنوك الأكلات والخطط الغذائية — كل شيء بمكان واحد',
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        color: Colors.white.withValues(alpha: 0.9),
+                      ),
+                ),
+              ],
+            ),
+          ),
+          IconButton(
+            tooltip: 'الملف الشخصي',
+            color: Colors.white,
+            onPressed: () => Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const SettingsScreen()),
+            ),
+            icon: const Icon(Icons.settings_outlined),
           ),
         ],
       ),

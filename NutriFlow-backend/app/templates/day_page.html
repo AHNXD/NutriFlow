@@ -1,9 +1,9 @@
 {% set meal_labels = {
-  "breakfast": "فطور",
-  "lunch": "غداء",
-  "dinner": "عشاء",
-  "salad": "سلطة",
-  "snack": "سناك"
+  "breakfast": {"label": "فطور", "badge": "ف"},
+  "lunch": {"label": "غداء", "badge": "غ"},
+  "dinner": {"label": "عشاء", "badge": "ع"},
+  "salad": {"label": "سلطة", "badge": "سل"},
+  "snack": {"label": "سناك", "badge": "سن"}
 } %}
 <div class="page">
   <div class="page-header">
@@ -15,15 +15,21 @@
   </div>
 
   {% if day.motivational_text %}
-  <div class="motivational-banner brand-gradient">{{ day.motivational_text }}</div>
+  <div class="motivational-banner brand-gradient">
+    <span class="quote-mark">"</span>{{ day.motivational_text }}<span class="quote-mark">"</span>
+  </div>
   {% endif %}
 
   <div class="meals-grid">
     {% for meal in day.meals %}
+    {% set meal_meta = meal_labels.get(meal.meal_type, {"label": meal.meal_type, "badge": "•"}) %}
     {% set name = meal.custom_name or (meal.recipe.name if meal.recipe else None) %}
     {% set ingredients = meal.custom_ingredients if meal.custom_ingredients is not none else (meal.recipe.ingredients if meal.recipe else []) %}
     <div class="meal-card">
-      <span class="meal-type">{{ meal_labels.get(meal.meal_type, meal.meal_type) }}</span>
+      <div class="meal-head">
+        <span class="meal-badge">{{ meal_meta.badge }}</span>
+        <span class="meal-type">{{ meal_meta.label }}</span>
+      </div>
       {% if meal.recipe and meal.recipe.image_url %}
       <img class="meal-photo" src="{{ meal.recipe.image_url }}" />
       {% endif %}
@@ -36,7 +42,7 @@
       </ul>
       {% endif %}
       {% if meal.recipe and meal.recipe.tip %}
-      <div class="meal-tip">💡 {{ meal.recipe.tip }}</div>
+      <div class="meal-tip"><strong>نصيحة:</strong> {{ meal.recipe.tip }}</div>
       {% endif %}
     </div>
     {% else %}

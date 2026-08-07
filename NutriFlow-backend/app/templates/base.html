@@ -4,6 +4,14 @@
   <meta charset="utf-8" />
   <title>{{ plan.patient_name }} — NutriFlow</title>
   <style>{% include "styles.css" %}</style>
+  <style>
+    :root {
+      --primary: {{ theme.primary }};
+      --secondary: {{ theme.secondary }};
+      --dark: {{ theme.dark }};
+      --soft: {{ theme.soft }};
+    }
+  </style>
 </head>
 <body>
   {% block content %}{% endblock %}

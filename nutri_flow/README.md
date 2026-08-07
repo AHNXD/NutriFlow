@@ -28,9 +28,9 @@ State is managed with Riverpod (`lib/providers`); data access lives in
 
    ```bash
    flutter run \
-     --dart-define=SUPABASE_URL=https://xxxx.supabase.co \
-     --dart-define=SUPABASE_ANON_KEY=your-anon-or-publishable-key \
-     --dart-define=PDF_SERVICE_URL=https://your-pdf-service.onrender.com
+     --dart-define=SUPABASE_URL=https://fxfambjealokclkrbmaq.supabase.co \
+     --dart-define=SUPABASE_ANON_KEY=sb_publishable_s4k3LVhcwPHbbLhxkq5MxA_zKN_KBWo \
+     --dart-define=PDF_SERVICE_URL=https://nutriflow-pdf.onrender.com
    ```
 
    Don't put real values directly in this file or commit them anywhere —
