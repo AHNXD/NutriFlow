@@ -1,4 +1,5 @@
 import logging
+from urllib.parse import quote
 
 from fastapi import APIRouter, HTTPException, Response
 
@@ -30,11 +31,20 @@ async def generate_plan_pdf(payload: GeneratePlanPdfRequest) -> Response:
         logger.exception("PDF rendering failed for plan_id=%s", payload.plan_id)
         raise HTTPException(status_code=500, detail=f"فشل توليد ملف PDF: {exc}")
 
-    patient = context["plan"]["patient_name"].replace(" ", "-")
+    # HTTP header values are Latin-1 only, but patient names are Arabic —
+    # a plain `filename="nutriflow-<name>.pdf"` crashes Response's header
+    # encoding outright (UnicodeEncodeError) rather than degrading. Send a
+    # safe ASCII fallback for `filename=` plus the real name UTF-8/percent
+    # -encoded in `filename*=`, per RFC 6266 — the standard way to have a
+    # non-ASCII download name while staying spec-compliant.
+    filename_utf8 = quote(f"nutriflow-{context['plan']['patient_name']}.pdf")
     return Response(
         content=pdf_bytes,
         media_type="application/pdf",
         headers={
-            "Content-Disposition": f'attachment; filename="nutriflow-{patient}.pdf"'
+            "Content-Disposition": (
+                f'attachment; filename="nutriflow-plan.pdf"; '
+                f"filename*=UTF-8''{filename_utf8}"
+            )
         },
     )
