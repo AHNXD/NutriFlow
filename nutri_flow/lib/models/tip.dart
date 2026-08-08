@@ -9,9 +9,9 @@ enum TipCategory {
   const TipCategory(this.value, this.labelAr);
 
   static TipCategory fromValue(String? value) => TipCategory.values.firstWhere(
-        (e) => e.value == value,
-        orElse: () => TipCategory.general,
-      );
+    (e) => e.value == value,
+    orElse: () => TipCategory.general,
+  );
 }
 
 class Tip {
@@ -19,18 +19,22 @@ class Tip {
   final String text;
   final TipCategory category;
 
-  const Tip({required this.id, required this.text, this.category = TipCategory.general});
+  const Tip({
+    required this.id,
+    required this.text,
+    this.category = TipCategory.general,
+  });
 
   factory Tip.fromMap(Map<String, dynamic> map) => Tip(
-        id: map['id'] as String,
-        text: map['text'] as String? ?? '',
-        category: TipCategory.fromValue(map['category'] as String?),
-      );
+    id: map['id'] as String,
+    text: map['text'] as String? ?? '',
+    category: TipCategory.fromValue(map['category'] as String?),
+  );
 
   Map<String, dynamic> toInsertMap() => {
-        'text': text,
-        'category': category.value,
-      };
+    'text': text,
+    'category': category.value,
+  };
 }
 
 class MotivationalMessage {

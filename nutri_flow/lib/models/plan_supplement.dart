@@ -16,19 +16,19 @@ class PlanSupplement {
   });
 
   factory PlanSupplement.fromMap(Map<String, dynamic> map) => PlanSupplement(
-        id: map['id'] as String,
-        planId: map['plan_id'] as String,
-        supplementId: map['supplement_id'] as String?,
-        dose: map['dose'] as String?,
-        timing: map['timing'] as String?,
-        notes: map['notes'] as String?,
-      );
+    id: map['id'] as String,
+    planId: map['plan_id'] as String,
+    supplementId: map['supplement_id'] as String?,
+    dose: map['dose'] as String?,
+    timing: map['timing'] as String?,
+    notes: map['notes'] as String?,
+  );
 
   Map<String, dynamic> toInsertMap() => {
-        'plan_id': planId,
-        'supplement_id': supplementId,
-        'dose': dose,
-        'timing': timing,
-        'notes': notes,
-      };
+    'plan_id': planId,
+    'supplement_id': supplementId,
+    'dose': dose,
+    'timing': timing,
+    'notes': notes,
+  };
 }

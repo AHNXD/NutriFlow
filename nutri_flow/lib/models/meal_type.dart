@@ -15,9 +15,9 @@ enum MealType {
   const MealType(this.value, this.labelAr);
 
   static MealType fromValue(String value) => MealType.values.firstWhere(
-        (e) => e.value == value,
-        orElse: () => MealType.snack,
-      );
+    (e) => e.value == value,
+    orElse: () => MealType.snack,
+  );
 
   /// Meal types valid for `plan_meals` (excludes `drink`).
   static const planMealTypes = [

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../widgets/layout.dart';
+
 import '../../models/meal_type.dart';
 import '../../models/plan_day.dart';
 import '../../models/plan_meal.dart';
@@ -21,16 +23,19 @@ class DayBuilderView extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return ListView(
-      padding: const EdgeInsets.fromLTRB(16, 16, 16, 96),
-      children: [
-        _MotivationalPicker(planId: planId, day: day),
-        const SizedBox(height: 20),
-        for (final type in MealType.planMealTypes) ...[
-          _MealTypeSection(planId: planId, day: day, mealType: type),
-          const SizedBox(height: 16),
+    return PageBody(
+      padding: EdgeInsets.zero,
+      child: ListView(
+        padding: const EdgeInsets.fromLTRB(16, 16, 16, 96),
+        children: [
+          _MotivationalPicker(planId: planId, day: day),
+          const SizedBox(height: 20),
+          for (final type in MealType.planMealTypes) ...[
+            _MealTypeSection(planId: planId, day: day, mealType: type),
+            const SizedBox(height: 16),
+          ],
         ],
-      ],
+      ),
     );
   }
 }
@@ -48,7 +53,10 @@ class _MotivationalPicker extends ConsumerWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('رسالة اليوم التحفيزية', style: Theme.of(context).textTheme.titleSmall),
+            Text(
+              'رسالة اليوم التحفيزية',
+              style: Theme.of(context).textTheme.titleSmall,
+            ),
             const SizedBox(height: 8),
             Row(
               children: [
@@ -67,7 +75,9 @@ class _MotivationalPicker extends ConsumerWidget {
                 IconButton(
                   icon: const Icon(Icons.edit_outlined),
                   onPressed: () async {
-                    final messages = await ref.read(motivationalMessageListProvider.future);
+                    final messages = await ref.read(
+                      motivationalMessageListProvider.future,
+                    );
                     if (!context.mounted) return;
                     final selected = await showDialog<String>(
                       context: context,
@@ -93,7 +103,10 @@ class _MotivationalPicker extends ConsumerWidget {
 }
 
 class _MotivationalDialog extends StatefulWidget {
-  const _MotivationalDialog({required this.initial, required this.bankMessages});
+  const _MotivationalDialog({
+    required this.initial,
+    required this.bankMessages,
+  });
   final String initial;
   final List<String> bankMessages;
 
@@ -129,14 +142,16 @@ class _MotivationalDialogState extends State<_MotivationalDialog> {
               controller: _controller,
               minLines: 1,
               maxLines: 3,
-              decoration: const InputDecoration(hintText: 'اكتبي رسالة مخصصة...'),
+              decoration: const InputDecoration(
+                hintText: 'رسالة مخصصة لهذا اليوم...',
+              ),
             ),
             if (widget.bankMessages.isNotEmpty) ...[
               const Align(
                 alignment: AlignmentDirectional.centerStart,
                 child: Padding(
                   padding: EdgeInsets.only(top: 12, bottom: 6),
-                  child: Text('أو اختاري من البنك:'),
+                  child: Text('أو من البنك:'),
                 ),
               ),
               ConstrainedBox(
@@ -158,7 +173,10 @@ class _MotivationalDialogState extends State<_MotivationalDialog> {
         ),
       ),
       actions: [
-        TextButton(onPressed: () => Navigator.pop(context), child: const Text('إلغاء')),
+        TextButton(
+          onPressed: () => Navigator.pop(context),
+          child: const Text('إلغاء'),
+        ),
         FilledButton(
           onPressed: () => Navigator.pop(context, _controller.text.trim()),
           child: const Text('حفظ'),
@@ -169,7 +187,11 @@ class _MotivationalDialogState extends State<_MotivationalDialog> {
 }
 
 class _MealTypeSection extends ConsumerWidget {
-  const _MealTypeSection({required this.planId, required this.day, required this.mealType});
+  const _MealTypeSection({
+    required this.planId,
+    required this.day,
+    required this.mealType,
+  });
   final String planId;
   final PlanDay day;
   final MealType mealType;
@@ -187,7 +209,10 @@ class _MealTypeSection extends ConsumerWidget {
           children: [
             Row(
               children: [
-                Text(mealType.labelAr, style: Theme.of(context).textTheme.titleSmall),
+                Text(
+                  mealType.labelAr,
+                  style: Theme.of(context).textTheme.titleSmall,
+                ),
                 const Spacer(),
                 TextButton.icon(
                   onPressed: () async {
@@ -206,10 +231,14 @@ class _MealTypeSection extends ConsumerWidget {
             if (meals.isEmpty)
               const Padding(
                 padding: EdgeInsets.symmetric(vertical: 4),
-                child: Text('لم تُضَف وجبة بعد', style: TextStyle(color: Colors.black38)),
+                child: Text(
+                  'لم تُضَف وجبة بعد',
+                  style: TextStyle(color: Colors.black38),
+                ),
               )
             else
-              for (final meal in meals) _MealTile(planId: planId, day: day, meal: meal),
+              for (final meal in meals)
+                _MealTile(planId: planId, day: day, meal: meal),
           ],
         ),
       ),
@@ -218,7 +247,11 @@ class _MealTypeSection extends ConsumerWidget {
 }
 
 class _MealTile extends ConsumerWidget {
-  const _MealTile({required this.planId, required this.day, required this.meal});
+  const _MealTile({
+    required this.planId,
+    required this.day,
+    required this.meal,
+  });
   final String planId;
   final PlanDay day;
   final PlanMeal meal;
@@ -228,9 +261,14 @@ class _MealTile extends ConsumerWidget {
     final notifier = ref.read(planDetailProvider(planId).notifier);
     return ListTile(
       contentPadding: EdgeInsets.zero,
-      title: Text(meal.customName ?? _recipeNameOf(ref, meal.recipeId) ?? 'وصفة من البنك'),
+      title: Text(
+        meal.customName ?? _recipeNameOf(ref, meal.recipeId) ?? 'وصفة من البنك',
+      ),
       subtitle: (meal.customIngredients != null)
-          ? const Text('كميات معدّلة لهذه الحالة', style: TextStyle(fontSize: 12))
+          ? const Text(
+              'كميات معدّلة لهذه الحالة',
+              style: TextStyle(fontSize: 12),
+            )
           : null,
       onTap: () async {
         final updated = await showMealEditorSheet(

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../theme/breakpoints.dart';
+import '../../widgets/layout.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../models/helper_drink.dart';
@@ -53,7 +55,9 @@ class _DrinkFormScreenState extends ConsumerState<DrinkFormScreen> {
         name: _nameCtrl.text.trim(),
         ingredients: _ingredients,
         steps: _steps,
-        timing: _timingCtrl.text.trim().isEmpty ? null : _timingCtrl.text.trim(),
+        timing: _timingCtrl.text.trim().isEmpty
+            ? null
+            : _timingCtrl.text.trim(),
       );
       if (_isEditing) {
         await notifier.updateDrink(drink);
@@ -63,8 +67,9 @@ class _DrinkFormScreenState extends ConsumerState<DrinkFormScreen> {
       if (mounted) Navigator.pop(context);
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text('تعذّر الحفظ: $e')));
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('تعذّر الحفظ: $e')));
       }
     } finally {
       if (mounted) setState(() => _saving = false);
@@ -74,47 +79,54 @@ class _DrinkFormScreenState extends ConsumerState<DrinkFormScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(_isEditing ? 'تعديل مشروب' : 'مشروب مساعد جديد')),
-      body: Form(
-        key: _formKey,
-        child: ListView(
-          padding: const EdgeInsets.all(16),
-          children: [
-            TextFormField(
-              controller: _nameCtrl,
-              decoration: const InputDecoration(labelText: 'اسم المشروب'),
-              validator: (v) => (v == null || v.trim().isEmpty) ? 'مطلوب' : null,
-            ),
-            const SizedBox(height: 12),
-            TextFormField(
-              controller: _timingCtrl,
-              decoration: const InputDecoration(
-                labelText: 'التوقيت (مثال: مرة يوميًا بعد الغداء بساعة)',
+      appBar: AppBar(
+        title: Text(_isEditing ? 'تعديل مشروب' : 'مشروب مساعد جديد'),
+      ),
+      body: PageBody(
+        maxWidth: Breakpoints.maxFormWidth,
+        padding: EdgeInsets.zero,
+        child: Form(
+          key: _formKey,
+          child: ListView(
+            padding: const EdgeInsets.all(16),
+            children: [
+              TextFormField(
+                controller: _nameCtrl,
+                decoration: const InputDecoration(labelText: 'اسم المشروب'),
+                validator: (v) =>
+                    (v == null || v.trim().isEmpty) ? 'مطلوب' : null,
               ),
-            ),
-            const SizedBox(height: 20),
-            IngredientListEditor(
-              initial: _ingredients,
-              onChanged: (v) => _ingredients = v,
-            ),
-            const SizedBox(height: 20),
-            StepsListEditor(
-              initial: _steps,
-              onChanged: (v) => _steps = v,
-              label: 'طريقة التحضير',
-            ),
-            const SizedBox(height: 28),
-            FilledButton(
-              onPressed: _saving ? null : _save,
-              child: _saving
-                  ? const SizedBox(
-                      height: 20,
-                      width: 20,
-                      child: CircularProgressIndicator(strokeWidth: 2),
-                    )
-                  : Text(_isEditing ? 'حفظ التعديلات' : 'إضافة المشروب'),
-            ),
-          ],
+              const SizedBox(height: 12),
+              TextFormField(
+                controller: _timingCtrl,
+                decoration: const InputDecoration(
+                  labelText: 'التوقيت (مثال: مرة يوميًا بعد الغداء بساعة)',
+                ),
+              ),
+              const SizedBox(height: 20),
+              IngredientListEditor(
+                initial: _ingredients,
+                onChanged: (v) => _ingredients = v,
+              ),
+              const SizedBox(height: 20),
+              StepsListEditor(
+                initial: _steps,
+                onChanged: (v) => _steps = v,
+                label: 'طريقة التحضير',
+              ),
+              const SizedBox(height: 28),
+              FilledButton(
+                onPressed: _saving ? null : _save,
+                child: _saving
+                    ? const SizedBox(
+                        height: 20,
+                        width: 20,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      )
+                    : Text(_isEditing ? 'حفظ التعديلات' : 'إضافة المشروب'),
+              ),
+            ],
+          ),
         ),
       ),
     );

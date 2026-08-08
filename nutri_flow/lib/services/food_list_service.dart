@@ -7,8 +7,7 @@ class FoodListService {
   final SupabaseClient _client;
 
   Future<List<FoodListItem>> fetchAll() async {
-    final rows =
-        await _client.from('food_lists').select().order('category');
+    final rows = await _client.from('food_lists').select().order('category');
     return (rows as List)
         .map((r) => FoodListItem.fromMap(Map<String, dynamic>.from(r as Map)))
         .toList();

@@ -7,6 +7,7 @@ import '../../providers/dietitian_profile_providers.dart';
 import '../../providers/plan_providers.dart';
 import '../../theme/pdf_themes.dart';
 import '../../widgets/pdf_layout_picker.dart';
+import '../../widgets/layout.dart';
 import '../../widgets/pdf_theme_picker.dart';
 
 class CreatePlanScreen extends ConsumerStatefulWidget {
@@ -65,8 +66,9 @@ class _CreatePlanScreenState extends ConsumerState<CreatePlanScreen> {
       if (mounted) Navigator.pop(context, created);
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text('تعذّر إنشاء الخطة: $e')));
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('تعذّر إنشاء الخطة: $e')));
       }
     } finally {
       if (mounted) setState(() => _saving = false);
@@ -75,86 +77,100 @@ class _CreatePlanScreenState extends ConsumerState<CreatePlanScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // Prefill the dietitian name from her saved profile (Settings) once,
-    // without overwriting anything she's already typed.
+    // Prefill the dietitian name from the saved profile (Settings) once,
+    // without overwriting anything already typed.
     final profile = ref.watch(dietitianProfileProvider).valueOrNull;
-    if (!_dietitianPrefilled && profile?.name != null && _dietitianCtrl.text.isEmpty) {
+    if (!_dietitianPrefilled &&
+        profile?.name != null &&
+        _dietitianCtrl.text.isEmpty) {
       _dietitianPrefilled = true;
       _dietitianCtrl.text = profile!.name!;
     }
 
     return Scaffold(
       appBar: AppBar(title: const Text('خطة جديدة')),
-      body: Form(
-        key: _formKey,
-        child: ListView(
-          padding: const EdgeInsets.all(16),
-          children: [
-            TextFormField(
-              controller: _patientCtrl,
-              decoration: const InputDecoration(labelText: 'اسم المريضة'),
-              validator: (v) => (v == null || v.trim().isEmpty) ? 'مطلوب' : null,
-            ),
-            const SizedBox(height: 12),
-            TextFormField(
-              controller: _dietitianCtrl,
-              decoration: const InputDecoration(labelText: 'اسم الأخصائية'),
-              validator: (v) => (v == null || v.trim().isEmpty) ? 'مطلوب' : null,
-            ),
-            const SizedBox(height: 12),
-            TextFormField(
-              controller: _durationCtrl,
-              decoration: const InputDecoration(labelText: 'عدد الأيام'),
-              keyboardType: TextInputType.number,
-              validator: (v) {
-                final n = int.tryParse(v?.trim() ?? '');
-                if (n == null || n < 1 || n > 31) return 'أدخلي رقمًا صحيحًا بين 1 و31';
-                return null;
-              },
-            ),
-            const SizedBox(height: 12),
-            TextFormField(
-              controller: _fastingHoursCtrl,
-              decoration: const InputDecoration(labelText: 'ساعات الصيام (اختياري، مثال: 16)'),
-              keyboardType: TextInputType.number,
-            ),
-            const SizedBox(height: 12),
-            TextFormField(
-              controller: _fastingNotesCtrl,
-              decoration: const InputDecoration(labelText: 'ملاحظات الصيام (اختياري)'),
-              minLines: 1,
-              maxLines: 3,
-            ),
-            const SizedBox(height: 12),
-            TextFormField(
-              controller: _generalNotesCtrl,
-              decoration: const InputDecoration(labelText: 'ملاحظات عامة (اختياري)'),
-              minLines: 1,
-              maxLines: 4,
-            ),
-            const SizedBox(height: 20),
-            PdfThemePicker(
-              selected: _theme,
-              onChanged: (id) => setState(() => _theme = id),
-            ),
-            const SizedBox(height: 20),
-            PdfLayoutPicker(
-              selected: _pdfLayout,
-              theme: PdfThemes.byId(_theme),
-              onChanged: (id) => setState(() => _pdfLayout = id),
-            ),
-            const SizedBox(height: 24),
-            FilledButton(
-              onPressed: _saving ? null : _save,
-              child: _saving
-                  ? const SizedBox(
-                      height: 20,
-                      width: 20,
-                      child: CircularProgressIndicator(strokeWidth: 2),
-                    )
-                  : const Text('إنشاء الخطة ومتابعة بناء الأيام'),
-            ),
-          ],
+      body: PageBody.form(
+        child: Form(
+          key: _formKey,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              TextFormField(
+                controller: _patientCtrl,
+                decoration: const InputDecoration(labelText: 'اسم المريض/ة'),
+                validator: (v) =>
+                    (v == null || v.trim().isEmpty) ? 'مطلوب' : null,
+              ),
+              const SizedBox(height: 12),
+              TextFormField(
+                controller: _dietitianCtrl,
+                decoration: const InputDecoration(labelText: 'اسم الأخصائي/ة'),
+                validator: (v) =>
+                    (v == null || v.trim().isEmpty) ? 'مطلوب' : null,
+              ),
+              const SizedBox(height: 12),
+              TextFormField(
+                controller: _durationCtrl,
+                decoration: const InputDecoration(labelText: 'عدد الأيام'),
+                keyboardType: TextInputType.number,
+                validator: (v) {
+                  final n = int.tryParse(v?.trim() ?? '');
+                  if (n == null || n < 1 || n > 31) {
+                    return 'الرجاء إدخال رقم بين 1 و31';
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(height: 12),
+              TextFormField(
+                controller: _fastingHoursCtrl,
+                decoration: const InputDecoration(
+                  labelText: 'ساعات الصيام (اختياري، مثال: 16)',
+                ),
+                keyboardType: TextInputType.number,
+              ),
+              const SizedBox(height: 12),
+              TextFormField(
+                controller: _fastingNotesCtrl,
+                decoration: const InputDecoration(
+                  labelText: 'ملاحظات الصيام (اختياري)',
+                ),
+                minLines: 1,
+                maxLines: 3,
+              ),
+              const SizedBox(height: 12),
+              TextFormField(
+                controller: _generalNotesCtrl,
+                decoration: const InputDecoration(
+                  labelText: 'ملاحظات عامة (اختياري)',
+                ),
+                minLines: 1,
+                maxLines: 4,
+              ),
+              const SizedBox(height: 20),
+              PdfThemePicker(
+                selected: _theme,
+                onChanged: (id) => setState(() => _theme = id),
+              ),
+              const SizedBox(height: 20),
+              PdfLayoutPicker(
+                selected: _pdfLayout,
+                theme: PdfThemes.byId(_theme),
+                onChanged: (id) => setState(() => _pdfLayout = id),
+              ),
+              const SizedBox(height: 24),
+              FilledButton(
+                onPressed: _saving ? null : _save,
+                child: _saving
+                    ? const SizedBox(
+                        height: 20,
+                        width: 20,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      )
+                    : const Text('إنشاء الخطة ومتابعة بناء الأيام'),
+              ),
+            ],
+          ),
         ),
       ),
     );

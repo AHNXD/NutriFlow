@@ -2,6 +2,8 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../theme/breakpoints.dart';
+import '../../widgets/layout.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:uuid/uuid.dart';
 
@@ -105,9 +107,9 @@ class _RecipeFormScreenState extends ConsumerState<RecipeFormScreen> {
       if (mounted) Navigator.pop(context);
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('تعذّر الحفظ: $e')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('تعذّر الحفظ: $e')));
       }
     } finally {
       if (mounted) setState(() => _saving = false);
@@ -120,71 +122,74 @@ class _RecipeFormScreenState extends ConsumerState<RecipeFormScreen> {
       appBar: AppBar(
         title: Text(_isEditing ? 'تعديل أكلة' : 'إضافة أكلة جديدة'),
       ),
-      body: Form(
-        key: _formKey,
-        child: ListView(
-          padding: const EdgeInsets.all(16),
-          children: [
-            _ImagePicker(
-              bytes: _pickedImageBytes,
-              existingUrl: _existingImageUrl,
-              onTap: _pickImage,
-            ),
-            const SizedBox(height: 16),
-            TextFormField(
-              controller: _nameCtrl,
-              decoration: const InputDecoration(labelText: 'اسم الأكلة'),
-              validator: (v) =>
-                  (v == null || v.trim().isEmpty) ? 'مطلوب' : null,
-            ),
-            const SizedBox(height: 12),
-            DropdownButtonFormField<MealType>(
-              initialValue: _mealType,
-              decoration: const InputDecoration(labelText: 'نوع الوجبة'),
-              items: MealType.values
-                  .map((m) => DropdownMenuItem(value: m, child: Text(m.labelAr)))
-                  .toList(),
-              onChanged: (v) => setState(() => _mealType = v ?? _mealType),
-            ),
-            const SizedBox(height: 20),
-            IngredientListEditor(
-              initial: _ingredients,
-              onChanged: (v) => _ingredients = v,
-            ),
-            const SizedBox(height: 20),
-            StepsListEditor(
-              initial: _steps,
-              onChanged: (v) => _steps = v,
-            ),
-            const SizedBox(height: 20),
-            TextFormField(
-              controller: _tipCtrl,
-              decoration: const InputDecoration(
-                labelText: 'نصيحة خاصة بالوصفة (اختياري)',
+      body: PageBody(
+        maxWidth: Breakpoints.maxFormWidth,
+        padding: EdgeInsets.zero,
+        child: Form(
+          key: _formKey,
+          child: ListView(
+            padding: const EdgeInsets.all(16),
+            children: [
+              _ImagePicker(
+                bytes: _pickedImageBytes,
+                existingUrl: _existingImageUrl,
+                onTap: _pickImage,
               ),
-              minLines: 1,
-              maxLines: 3,
-            ),
-            const SizedBox(height: 12),
-            TextFormField(
-              controller: _tagsCtrl,
-              decoration: const InputDecoration(
-                labelText: 'وسوم (افصل بفاصلة، مثل: عالي بروتين، نباتي)',
+              const SizedBox(height: 16),
+              TextFormField(
+                controller: _nameCtrl,
+                decoration: const InputDecoration(labelText: 'اسم الأكلة'),
+                validator: (v) =>
+                    (v == null || v.trim().isEmpty) ? 'مطلوب' : null,
               ),
-            ),
-            const SizedBox(height: 28),
-            FilledButton(
-              onPressed: _saving ? null : _save,
-              child: _saving
-                  ? const SizedBox(
-                      height: 20,
-                      width: 20,
-                      child: CircularProgressIndicator(strokeWidth: 2),
+              const SizedBox(height: 12),
+              DropdownButtonFormField<MealType>(
+                initialValue: _mealType,
+                decoration: const InputDecoration(labelText: 'نوع الوجبة'),
+                items: MealType.values
+                    .map(
+                      (m) => DropdownMenuItem(value: m, child: Text(m.labelAr)),
                     )
-                  : Text(_isEditing ? 'حفظ التعديلات' : 'إضافة الأكلة'),
-            ),
-            const SizedBox(height: 16),
-          ],
+                    .toList(),
+                onChanged: (v) => setState(() => _mealType = v ?? _mealType),
+              ),
+              const SizedBox(height: 20),
+              IngredientListEditor(
+                initial: _ingredients,
+                onChanged: (v) => _ingredients = v,
+              ),
+              const SizedBox(height: 20),
+              StepsListEditor(initial: _steps, onChanged: (v) => _steps = v),
+              const SizedBox(height: 20),
+              TextFormField(
+                controller: _tipCtrl,
+                decoration: const InputDecoration(
+                  labelText: 'نصيحة خاصة بالوصفة (اختياري)',
+                ),
+                minLines: 1,
+                maxLines: 3,
+              ),
+              const SizedBox(height: 12),
+              TextFormField(
+                controller: _tagsCtrl,
+                decoration: const InputDecoration(
+                  labelText: 'وسوم (افصل بفاصلة، مثل: عالي بروتين، نباتي)',
+                ),
+              ),
+              const SizedBox(height: 28),
+              FilledButton(
+                onPressed: _saving ? null : _save,
+                child: _saving
+                    ? const SizedBox(
+                        height: 20,
+                        width: 20,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      )
+                    : Text(_isEditing ? 'حفظ التعديلات' : 'إضافة الأكلة'),
+              ),
+              const SizedBox(height: 16),
+            ],
+          ),
         ),
       ),
     );
@@ -213,7 +218,11 @@ class _ImagePicker extends StatelessWidget {
       child = const Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Icons.add_photo_alternate_outlined, size: 36, color: Colors.black38),
+          Icon(
+            Icons.add_photo_alternate_outlined,
+            size: 36,
+            color: Colors.black38,
+          ),
           SizedBox(height: 8),
           Text('إضافة صورة', style: TextStyle(color: Colors.black45)),
         ],

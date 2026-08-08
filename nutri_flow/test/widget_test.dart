@@ -8,11 +8,10 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:nutri_flow/main.dart';
 
 void main() {
-  testWidgets('shows setup-required screen without Supabase config',
-      (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const ProviderScope(child: NutriFlowApp()),
-    );
+  testWidgets('shows setup-required screen without Supabase config', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(const ProviderScope(child: NutriFlowApp()));
     await tester.pumpAndSettle();
 
     expect(find.text('إعداد الاتصال بقاعدة البيانات مطلوب'), findsOneWidget);

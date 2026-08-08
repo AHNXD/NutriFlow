@@ -30,10 +30,12 @@ class _StepsListEditorState extends State<StepsListEditor> {
   }
 
   void _emit() {
-    widget.onChanged(_controllers
-        .map((c) => c.text.trim())
-        .where((s) => s.isNotEmpty)
-        .toList());
+    widget.onChanged(
+      _controllers
+          .map((c) => c.text.trim())
+          .where((s) => s.isNotEmpty)
+          .toList(),
+    );
   }
 
   @override
@@ -71,7 +73,10 @@ class _StepsListEditorState extends State<StepsListEditor> {
                   padding: const EdgeInsets.only(top: 14, left: 8),
                   child: CircleAvatar(
                     radius: 12,
-                    child: Text('${i + 1}', style: const TextStyle(fontSize: 12)),
+                    child: Text(
+                      '${i + 1}',
+                      style: const TextStyle(fontSize: 12),
+                    ),
                   ),
                 ),
                 Expanded(
@@ -88,10 +93,10 @@ class _StepsListEditorState extends State<StepsListEditor> {
                   onPressed: _controllers.length == 1
                       ? null
                       : () => setState(() {
-                            _controllers[i].dispose();
-                            _controllers.removeAt(i);
-                            _emit();
-                          }),
+                          _controllers[i].dispose();
+                          _controllers.removeAt(i);
+                          _emit();
+                        }),
                 ),
               ],
             ),

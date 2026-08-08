@@ -14,17 +14,17 @@ class Supplement {
   });
 
   factory Supplement.fromMap(Map<String, dynamic> map) => Supplement(
-        id: map['id'] as String,
-        name: map['name'] as String? ?? '',
-        defaultDose: map['default_dose'] as String?,
-        defaultTiming: map['default_timing'] as String?,
-        defaultNotes: map['default_notes'] as String?,
-      );
+    id: map['id'] as String,
+    name: map['name'] as String? ?? '',
+    defaultDose: map['default_dose'] as String?,
+    defaultTiming: map['default_timing'] as String?,
+    defaultNotes: map['default_notes'] as String?,
+  );
 
   Map<String, dynamic> toInsertMap() => {
-        'name': name,
-        'default_dose': defaultDose,
-        'default_timing': defaultTiming,
-        'default_notes': defaultNotes,
-      };
+    'name': name,
+    'default_dose': defaultDose,
+    'default_timing': defaultTiming,
+    'default_notes': defaultNotes,
+  };
 }

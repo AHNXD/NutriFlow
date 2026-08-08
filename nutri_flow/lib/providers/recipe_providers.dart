@@ -13,8 +13,8 @@ final recipeServiceProvider = Provider<RecipeService>((ref) {
 
 final recipeListProvider =
     AsyncNotifierProvider<RecipeListNotifier, List<Recipe>>(
-  RecipeListNotifier.new,
-);
+      RecipeListNotifier.new,
+    );
 
 class RecipeListNotifier extends AsyncNotifier<List<Recipe>> {
   RecipeService get _service => ref.read(recipeServiceProvider);
@@ -37,7 +37,8 @@ class RecipeListNotifier extends AsyncNotifier<List<Recipe>> {
     final updated = await _service.update(recipe);
     final current = state.valueOrNull ?? [];
     state = AsyncData([
-      for (final r in current) if (r.id == updated.id) updated else r,
+      for (final r in current)
+        if (r.id == updated.id) updated else r,
     ]);
     return updated;
   }
@@ -62,25 +63,33 @@ class RecipeBankFilter {
   final MealType? mealType;
   const RecipeBankFilter({this.query = '', this.mealType});
 
-  RecipeBankFilter copyWith({String? query, MealType? mealType, bool clearMealType = false}) =>
-      RecipeBankFilter(
-        query: query ?? this.query,
-        mealType: clearMealType ? null : (mealType ?? this.mealType),
-      );
+  RecipeBankFilter copyWith({
+    String? query,
+    MealType? mealType,
+    bool clearMealType = false,
+  }) => RecipeBankFilter(
+    query: query ?? this.query,
+    mealType: clearMealType ? null : (mealType ?? this.mealType),
+  );
 }
 
-final recipeBankFilterProvider =
-    StateProvider<RecipeBankFilter>((ref) => const RecipeBankFilter());
+final recipeBankFilterProvider = StateProvider<RecipeBankFilter>(
+  (ref) => const RecipeBankFilter(),
+);
 
 final filteredRecipesProvider = Provider<AsyncValue<List<Recipe>>>((ref) {
   final recipes = ref.watch(recipeListProvider);
   final filter = ref.watch(recipeBankFilterProvider);
   return recipes.whenData((list) {
     return list.where((r) {
-      final matchesType = filter.mealType == null || r.mealType == filter.mealType;
-      final matchesQuery = filter.query.trim().isEmpty ||
+      final matchesType =
+          filter.mealType == null || r.mealType == filter.mealType;
+      final matchesQuery =
+          filter.query.trim().isEmpty ||
           r.name.toLowerCase().contains(filter.query.trim().toLowerCase()) ||
-          r.tags.any((t) => t.toLowerCase().contains(filter.query.trim().toLowerCase()));
+          r.tags.any(
+            (t) => t.toLowerCase().contains(filter.query.trim().toLowerCase()),
+          );
       return matchesType && matchesQuery;
     }).toList();
   });

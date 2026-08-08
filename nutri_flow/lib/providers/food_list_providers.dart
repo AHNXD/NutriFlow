@@ -10,8 +10,8 @@ final foodListServiceProvider = Provider<FoodListService>((ref) {
 
 final foodListProvider =
     AsyncNotifierProvider<FoodListNotifier, List<FoodListItem>>(
-  FoodListNotifier.new,
-);
+      FoodListNotifier.new,
+    );
 
 class FoodListNotifier extends AsyncNotifier<List<FoodListItem>> {
   FoodListService get _service => ref.read(foodListServiceProvider);
@@ -33,7 +33,8 @@ class FoodListNotifier extends AsyncNotifier<List<FoodListItem>> {
     final updated = await _service.update(item);
     final current = state.valueOrNull ?? [];
     state = AsyncData([
-      for (final x in current) if (x.id == updated.id) updated else x,
+      for (final x in current)
+        if (x.id == updated.id) updated else x,
     ]);
   }
 

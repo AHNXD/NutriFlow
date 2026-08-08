@@ -18,10 +18,10 @@ class PdfTheme {
   });
 
   LinearGradient get gradient => LinearGradient(
-        begin: Alignment.topRight,
-        end: Alignment.bottomLeft,
-        colors: [primary, secondary],
-      );
+    begin: Alignment.topRight,
+    end: Alignment.bottomLeft,
+    colors: [primary, secondary],
+  );
 }
 
 class PdfThemes {
@@ -83,7 +83,16 @@ class PdfThemes {
     secondary: Color(0xFF7A889B),
   );
 
-  static const all = [emerald, ocean, sunset, orchid, rose, gold, sand, charcoal];
+  static const all = [
+    emerald,
+    ocean,
+    sunset,
+    orchid,
+    rose,
+    gold,
+    sand,
+    charcoal,
+  ];
 
   static PdfTheme byId(String id) =>
       all.firstWhere((t) => t.id == id, orElse: () => emerald);

@@ -78,7 +78,8 @@ class PlanService {
   Future<void> updatePlanDayMotivationalText(String dayId, String? text) =>
       _client
           .from('plan_days')
-          .update({'motivational_text': text}).eq('id', dayId);
+          .update({'motivational_text': text})
+          .eq('id', dayId);
 
   Future<List<PlanMeal>> fetchMealsForDay(String planDayId) async {
     final rows = await _client
@@ -114,8 +115,10 @@ class PlanService {
       _client.from('plan_meals').delete().eq('id', id);
 
   Future<List<String>> fetchPlanDrinkIds(String planId) async {
-    final rows =
-        await _client.from('plan_drinks').select('drink_id').eq('plan_id', planId);
+    final rows = await _client
+        .from('plan_drinks')
+        .select('drink_id')
+        .eq('plan_id', planId);
     return (rows as List).map((r) => r['drink_id'] as String).toList();
   }
 
@@ -129,8 +132,10 @@ class PlanService {
   }
 
   Future<List<PlanSupplement>> fetchPlanSupplements(String planId) async {
-    final rows =
-        await _client.from('plan_supplements').select().eq('plan_id', planId);
+    final rows = await _client
+        .from('plan_supplements')
+        .select()
+        .eq('plan_id', planId);
     return (rows as List)
         .map((r) => PlanSupplement.fromMap(Map<String, dynamic>.from(r as Map)))
         .toList();

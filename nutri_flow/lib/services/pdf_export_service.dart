@@ -23,7 +23,9 @@ class PdfExportService {
       body: '{"plan_id": "$planId"}',
     );
     if (response.statusCode != 200) {
-      throw Exception('فشل توليد الملف (${response.statusCode}): ${response.body}');
+      throw Exception(
+        'فشل توليد الملف (${response.statusCode}): ${response.body}',
+      );
     }
     return response.bodyBytes;
   }

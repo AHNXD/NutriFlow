@@ -11,8 +11,8 @@ final helperDrinkServiceProvider = Provider<HelperDrinkService>((ref) {
 
 final helperDrinkListProvider =
     AsyncNotifierProvider<HelperDrinkListNotifier, List<HelperDrink>>(
-  HelperDrinkListNotifier.new,
-);
+      HelperDrinkListNotifier.new,
+    );
 
 class HelperDrinkListNotifier extends AsyncNotifier<List<HelperDrink>> {
   HelperDrinkService get _service => ref.read(helperDrinkServiceProvider);
@@ -34,7 +34,8 @@ class HelperDrinkListNotifier extends AsyncNotifier<List<HelperDrink>> {
     final updated = await _service.update(drink);
     final current = state.valueOrNull ?? [];
     state = AsyncData([
-      for (final d in current) if (d.id == updated.id) updated else d,
+      for (final d in current)
+        if (d.id == updated.id) updated else d,
     ]);
   }
 
@@ -51,8 +52,8 @@ final supplementServiceProvider = Provider<SupplementService>((ref) {
 
 final supplementListProvider =
     AsyncNotifierProvider<SupplementListNotifier, List<Supplement>>(
-  SupplementListNotifier.new,
-);
+      SupplementListNotifier.new,
+    );
 
 class SupplementListNotifier extends AsyncNotifier<List<Supplement>> {
   SupplementService get _service => ref.read(supplementServiceProvider);
@@ -74,7 +75,8 @@ class SupplementListNotifier extends AsyncNotifier<List<Supplement>> {
     final updated = await _service.update(s);
     final current = state.valueOrNull ?? [];
     state = AsyncData([
-      for (final x in current) if (x.id == updated.id) updated else x,
+      for (final x in current)
+        if (x.id == updated.id) updated else x,
     ]);
   }
 

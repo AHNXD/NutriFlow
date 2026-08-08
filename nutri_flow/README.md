@@ -55,6 +55,46 @@ State is managed with Riverpod (`lib/providers`); data access lives in
 Same `--dart-define` flags apply to `flutter build apk`, `flutter build
 macos`, `flutter build windows`, etc.
 
+## Building a release APK for a tester
+
+Config is compiled in at build time. Keep the values in a gitignored file
+rather than typing them per build:
+
+```json
+// env/prod.json   (env/ is gitignored — it holds the anon key)
+{
+  "SUPABASE_URL": "https://<project>.supabase.co",
+  "SUPABASE_ANON_KEY": "sb_publishable_...",
+  "PDF_SERVICE_URL": "https://nutriflow-pdf.onrender.com"
+}
+```
+
+```bash
+flutter build apk --release --dart-define-from-file=env/prod.json
+# -> build/app/outputs/flutter-apk/app-release.apk
+```
+
+Send that one file (universal APK — installs on any phone; don't use
+`--split-per-abi` unless you know the tester's CPU). What the tester sees:
+
+- Android blocks sideloading by default. Opening the APK prompts to allow
+  installs from whichever app it arrived in (WhatsApp / Drive / Files), then
+  Play Protect warns about an unknown developer — "install anyway".
+- **The first PDF export takes 30–60 seconds.** The PDF service is on
+  Render's free tier and spins down after ~15 minutes idle; the first
+  request pays the cold start. Later exports are fast. Warn the tester or
+  they will think the app hung.
+- A free Supabase project pauses after 7 days with no activity, which shows
+  up as every screen failing to load. Opening the dashboard resumes it.
+
+Release builds are currently signed with the local **debug** key (see the
+TODO in `android/app/build.gradle.kts`). That installs and runs fine for
+testing, with two caveats: a build made on a different machine has a
+different signature, so the tester would have to uninstall before
+installing it; and Google Play will not accept it, nor will it accept the
+`com.example.nutri_flow` application id. Both are only worth fixing when
+you actually publish.
+
 ## Known gaps (see roadmap in the spec, step 6 onward)
 
 - No dedicated "Plan Preview" screen yet — the day builder itself doubles as

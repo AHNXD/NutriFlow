@@ -16,18 +16,18 @@ class HelperDrink {
   });
 
   factory HelperDrink.fromMap(Map<String, dynamic> map) => HelperDrink(
-        id: map['id'] as String,
-        name: map['name'] as String? ?? '',
-        ingredients: Ingredient.listFromJson(map['ingredients']),
-        steps: (map['steps'] as List?)?.map((e) => e.toString()).toList() ??
-            const [],
-        timing: map['timing'] as String?,
-      );
+    id: map['id'] as String,
+    name: map['name'] as String? ?? '',
+    ingredients: Ingredient.listFromJson(map['ingredients']),
+    steps:
+        (map['steps'] as List?)?.map((e) => e.toString()).toList() ?? const [],
+    timing: map['timing'] as String?,
+  );
 
   Map<String, dynamic> toInsertMap() => {
-        'name': name,
-        'ingredients': Ingredient.listToJson(ingredients),
-        'steps': steps,
-        'timing': timing,
-      };
+    'name': name,
+    'ingredients': Ingredient.listToJson(ingredients),
+    'steps': steps,
+    'timing': timing,
+  };
 }

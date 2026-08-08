@@ -4,7 +4,11 @@ import '../theme/pdf_themes.dart';
 
 /// Visual swatch grid for picking a plan's PDF color theme.
 class PdfThemePicker extends StatelessWidget {
-  const PdfThemePicker({super.key, required this.selected, required this.onChanged});
+  const PdfThemePicker({
+    super.key,
+    required this.selected,
+    required this.onChanged,
+  });
 
   final String selected;
   final ValueChanged<String> onChanged;
@@ -34,7 +38,11 @@ class PdfThemePicker extends StatelessWidget {
 }
 
 class _Swatch extends StatelessWidget {
-  const _Swatch({required this.theme, required this.isSelected, required this.onTap});
+  const _Swatch({
+    required this.theme,
+    required this.isSelected,
+    required this.onTap,
+  });
 
   final PdfTheme theme;
   final bool isSelected;
@@ -51,7 +59,9 @@ class _Swatch extends StatelessWidget {
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(14),
           border: Border.all(
-            color: isSelected ? theme.primary : Colors.black.withValues(alpha: 0.08),
+            color: isSelected
+                ? theme.primary
+                : Colors.black.withValues(alpha: 0.08),
             width: isSelected ? 2 : 1,
           ),
         ),
@@ -60,7 +70,10 @@ class _Swatch extends StatelessWidget {
             Container(
               width: 36,
               height: 36,
-              decoration: BoxDecoration(gradient: theme.gradient, shape: BoxShape.circle),
+              decoration: BoxDecoration(
+                gradient: theme.gradient,
+                shape: BoxShape.circle,
+              ),
               child: isSelected
                   ? const Icon(Icons.check, color: Colors.white, size: 18)
                   : null,
@@ -69,8 +82,8 @@ class _Swatch extends StatelessWidget {
             Text(
               theme.labelAr,
               style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    fontWeight: isSelected ? FontWeight.w700 : FontWeight.w400,
-                  ),
+                fontWeight: isSelected ? FontWeight.w700 : FontWeight.w400,
+              ),
             ),
           ],
         ),

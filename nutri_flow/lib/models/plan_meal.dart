@@ -29,29 +29,29 @@ class PlanMeal {
   });
 
   factory PlanMeal.fromMap(Map<String, dynamic> map) => PlanMeal(
-        id: map['id'] as String,
-        planDayId: map['plan_day_id'] as String,
-        mealType: MealType.fromValue(map['meal_type'] as String? ?? 'snack'),
-        recipeId: map['recipe_id'] as String?,
-        customName: map['custom_name'] as String?,
-        customIngredients: map['custom_ingredients'] != null
-            ? Ingredient.listFromJson(map['custom_ingredients'])
-            : null,
-        customSteps: (map['custom_steps'] as List?)
-            ?.map((e) => e.toString())
-            .toList(),
-        sortOrder: (map['sort_order'] as num?)?.toInt() ?? 0,
-      );
+    id: map['id'] as String,
+    planDayId: map['plan_day_id'] as String,
+    mealType: MealType.fromValue(map['meal_type'] as String? ?? 'snack'),
+    recipeId: map['recipe_id'] as String?,
+    customName: map['custom_name'] as String?,
+    customIngredients: map['custom_ingredients'] != null
+        ? Ingredient.listFromJson(map['custom_ingredients'])
+        : null,
+    customSteps: (map['custom_steps'] as List?)
+        ?.map((e) => e.toString())
+        .toList(),
+    sortOrder: (map['sort_order'] as num?)?.toInt() ?? 0,
+  );
 
   Map<String, dynamic> toInsertMap() => {
-        'plan_day_id': planDayId,
-        'meal_type': mealType.value,
-        'recipe_id': recipeId,
-        'custom_name': customName,
-        'custom_ingredients': customIngredients != null
-            ? Ingredient.listToJson(customIngredients!)
-            : null,
-        'custom_steps': customSteps,
-        'sort_order': sortOrder,
-      };
+    'plan_day_id': planDayId,
+    'meal_type': mealType.value,
+    'recipe_id': recipeId,
+    'custom_name': customName,
+    'custom_ingredients': customIngredients != null
+        ? Ingredient.listToJson(customIngredients!)
+        : null,
+    'custom_steps': customSteps,
+    'sort_order': sortOrder,
+  };
 }

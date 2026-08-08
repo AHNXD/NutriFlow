@@ -3,10 +3,10 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'config/env.dart';
-import 'screens/home/home_screen.dart';
 import 'screens/home/setup_required_screen.dart';
 import 'services/supabase_client_provider.dart';
 import 'theme/app_theme.dart';
+import 'widgets/app_shell.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -32,7 +32,9 @@ class NutriFlowApp extends StatelessWidget {
         GlobalWidgetsLocalizations.delegate,
         GlobalCupertinoLocalizations.delegate,
       ],
-      home: Env.isSupabaseConfigured ? const HomeScreen() : const SetupRequiredScreen(),
+      home: Env.isSupabaseConfigured
+          ? const AppShell()
+          : const SetupRequiredScreen(),
     );
   }
 }

@@ -67,7 +67,8 @@ class _MealEditorContentState extends ConsumerState<_MealEditorContent> {
     final m = widget.existing;
     _fromBank = m == null ? true : m.recipeId != null;
     _recipeId = m?.recipeId;
-    _overrideQuantities = m?.customIngredients != null || m?.customSteps != null;
+    _overrideQuantities =
+        m?.customIngredients != null || m?.customSteps != null;
     _nameCtrl = TextEditingController(text: m?.customName ?? '');
     _ingredients = m?.customIngredients ?? [];
     _steps = m?.customSteps ?? [];
@@ -94,7 +95,9 @@ class _MealEditorContentState extends ConsumerState<_MealEditorContent> {
       mealType: widget.mealType,
       recipeId: _fromBank ? _recipeId : null,
       customName: _fromBank ? null : _nameCtrl.text.trim(),
-      customIngredients: (_fromBank && !_overrideQuantities) ? null : _ingredients,
+      customIngredients: (_fromBank && !_overrideQuantities)
+          ? null
+          : _ingredients,
       customSteps: (_fromBank && !_overrideQuantities) ? null : _steps,
       sortOrder: widget.existing?.sortOrder ?? 0,
     );
@@ -106,7 +109,9 @@ class _MealEditorContentState extends ConsumerState<_MealEditorContent> {
     final recipesAsync = ref.watch(recipeListProvider);
 
     return Padding(
-      padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+      padding: EdgeInsets.only(
+        bottom: MediaQuery.of(context).viewInsets.bottom,
+      ),
       child: Column(
         children: [
           Padding(
@@ -147,7 +152,7 @@ class _MealEditorContentState extends ConsumerState<_MealEditorContent> {
                   TextField(
                     decoration: const InputDecoration(
                       prefixIcon: Icon(Icons.search),
-                      hintText: 'ابحث عن أكلة...',
+                      hintText: 'بحث عن أكلة...',
                     ),
                     onChanged: (v) => setState(() => _search = v),
                   ),
@@ -163,8 +168,13 @@ class _MealEditorContentState extends ConsumerState<_MealEditorContent> {
                     ),
                     data: (recipes) {
                       final filtered = recipes
-                          .where((r) => _search.trim().isEmpty ||
-                              r.name.toLowerCase().contains(_search.trim().toLowerCase()))
+                          .where(
+                            (r) =>
+                                _search.trim().isEmpty ||
+                                r.name.toLowerCase().contains(
+                                  _search.trim().toLowerCase(),
+                                ),
+                          )
                           .toList();
                       if (filtered.isEmpty) {
                         return const Padding(
@@ -177,7 +187,9 @@ class _MealEditorContentState extends ConsumerState<_MealEditorContent> {
                           for (final recipe in filtered)
                             ListTile(
                               selected: _recipeId == recipe.id,
-                              selectedTileColor: Colors.black.withValues(alpha: 0.04),
+                              selectedTileColor: Colors.black.withValues(
+                                alpha: 0.04,
+                              ),
                               leading: Icon(
                                 _recipeId == recipe.id
                                     ? Icons.radio_button_checked
@@ -200,13 +212,16 @@ class _MealEditorContentState extends ConsumerState<_MealEditorContent> {
                       contentPadding: EdgeInsets.zero,
                       value: _overrideQuantities,
                       title: const Text('تعديل الكمية لهذه الحالة'),
-                      subtitle: const Text('بدون تغيير الوصفة الأصلية في البنك'),
+                      subtitle: const Text(
+                        'بدون تغيير الوصفة الأصلية في البنك',
+                      ),
                       onChanged: (v) {
                         setState(() {
                           _overrideQuantities = v;
                           if (v && _ingredients.isEmpty) {
-                            final recipe =
-                                recipesAsync.valueOrNull?.firstWhere((r) => r.id == _recipeId);
+                            final recipe = recipesAsync.valueOrNull?.firstWhere(
+                              (r) => r.id == _recipeId,
+                            );
                             if (recipe != null) _applyRecipeDefaults(recipe);
                           }
                         });
@@ -219,7 +234,10 @@ class _MealEditorContentState extends ConsumerState<_MealEditorContent> {
                         onChanged: (v) => _ingredients = v,
                       ),
                       const SizedBox(height: 16),
-                      StepsListEditor(initial: _steps, onChanged: (v) => _steps = v),
+                      StepsListEditor(
+                        initial: _steps,
+                        onChanged: (v) => _steps = v,
+                      ),
                     ],
                   ],
                 ] else ...[
@@ -233,7 +251,10 @@ class _MealEditorContentState extends ConsumerState<_MealEditorContent> {
                     onChanged: (v) => _ingredients = v,
                   ),
                   const SizedBox(height: 16),
-                  StepsListEditor(initial: _steps, onChanged: (v) => _steps = v),
+                  StepsListEditor(
+                    initial: _steps,
+                    onChanged: (v) => _steps = v,
+                  ),
                 ],
               ],
             ),

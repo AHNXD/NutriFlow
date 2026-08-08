@@ -5,13 +5,18 @@ import 'package:uuid/uuid.dart';
 import '../../models/supplement.dart';
 import '../../providers/drink_supplement_providers.dart';
 import '../../widgets/async_value_view.dart';
+import '../../widgets/layout.dart';
 import '../../widgets/confirm_delete_dialog.dart';
 import '../../widgets/empty_state.dart';
 
 class SupplementsBankScreen extends ConsumerWidget {
   const SupplementsBankScreen({super.key});
 
-  Future<void> _openEditor(BuildContext context, WidgetRef ref, {Supplement? existing}) async {
+  Future<void> _openEditor(
+    BuildContext context,
+    WidgetRef ref, {
+    Supplement? existing,
+  }) async {
     final result = await showDialog<Supplement>(
       context: context,
       builder: (context) => _SupplementEditorDialog(existing: existing),
@@ -35,39 +40,51 @@ class SupplementsBankScreen extends ConsumerWidget {
         icon: const Icon(Icons.add),
         label: const Text('مكمّل جديد'),
       ),
-      body: AsyncValueView<Supplement>(
-        value: supplements,
-        onRetry: () => ref.read(supplementListProvider.notifier).refresh(),
-        emptyBuilder: (context) => const EmptyState(
-          icon: Icons.medication_outlined,
-          title: 'لا توجد مكملات غذائية بعد',
-        ),
-        data: (context, list) => ListView.separated(
-          padding: const EdgeInsets.fromLTRB(12, 12, 12, 96),
-          itemCount: list.length,
-          separatorBuilder: (_, _) => const SizedBox(height: 6),
-          itemBuilder: (context, i) {
-            final s = list[i];
-            final subtitleParts = [
-              if (s.defaultDose != null && s.defaultDose!.isNotEmpty) 'الجرعة: ${s.defaultDose}',
-              if (s.defaultTiming != null && s.defaultTiming!.isNotEmpty) 'التوقيت: ${s.defaultTiming}',
-            ];
-            return Card(
-              child: ListTile(
-                title: Text(s.name),
-                subtitle: subtitleParts.isEmpty ? null : Text(subtitleParts.join(' • ')),
-                onTap: () => _openEditor(context, ref, existing: s),
-                trailing: IconButton(
-                  icon: const Icon(Icons.delete_outline),
-                  onPressed: () async {
-                    if (await confirmDelete(context, title: 'حذف "${s.name}"؟')) {
-                      await ref.read(supplementListProvider.notifier).delete(s.id);
-                    }
-                  },
+      body: PageBody(
+        padding: EdgeInsets.zero,
+        child: AsyncValueView<Supplement>(
+          value: supplements,
+          onRetry: () => ref.read(supplementListProvider.notifier).refresh(),
+          emptyBuilder: (context) => const EmptyState(
+            icon: Icons.medication_outlined,
+            title: 'لا توجد مكملات غذائية بعد',
+          ),
+          data: (context, list) => ListView.separated(
+            padding: const EdgeInsets.fromLTRB(12, 12, 12, 96),
+            itemCount: list.length,
+            separatorBuilder: (_, _) => const SizedBox(height: 6),
+            itemBuilder: (context, i) {
+              final s = list[i];
+              final subtitleParts = [
+                if (s.defaultDose != null && s.defaultDose!.isNotEmpty)
+                  'الجرعة: ${s.defaultDose}',
+                if (s.defaultTiming != null && s.defaultTiming!.isNotEmpty)
+                  'التوقيت: ${s.defaultTiming}',
+              ];
+              return Card(
+                child: ListTile(
+                  title: Text(s.name),
+                  subtitle: subtitleParts.isEmpty
+                      ? null
+                      : Text(subtitleParts.join(' • ')),
+                  onTap: () => _openEditor(context, ref, existing: s),
+                  trailing: IconButton(
+                    icon: const Icon(Icons.delete_outline),
+                    onPressed: () async {
+                      if (await confirmDelete(
+                        context,
+                        title: 'حذف "${s.name}"؟',
+                      )) {
+                        await ref
+                            .read(supplementListProvider.notifier)
+                            .delete(s.id);
+                      }
+                    },
+                  ),
                 ),
-              ),
-            );
-          },
+              );
+            },
+          ),
         ),
       ),
     );
@@ -79,7 +96,8 @@ class _SupplementEditorDialog extends StatefulWidget {
   final Supplement? existing;
 
   @override
-  State<_SupplementEditorDialog> createState() => _SupplementEditorDialogState();
+  State<_SupplementEditorDialog> createState() =>
+      _SupplementEditorDialogState();
 }
 
 class _SupplementEditorDialogState extends State<_SupplementEditorDialog> {
@@ -122,22 +140,29 @@ class _SupplementEditorDialogState extends State<_SupplementEditorDialog> {
                 controller: _name,
                 autofocus: true,
                 decoration: const InputDecoration(labelText: 'الاسم'),
-                validator: (v) => (v == null || v.trim().isEmpty) ? 'مطلوب' : null,
+                validator: (v) =>
+                    (v == null || v.trim().isEmpty) ? 'مطلوب' : null,
               ),
               const SizedBox(height: 10),
               TextFormField(
                 controller: _dose,
-                decoration: const InputDecoration(labelText: 'الجرعة الافتراضية'),
+                decoration: const InputDecoration(
+                  labelText: 'الجرعة الافتراضية',
+                ),
               ),
               const SizedBox(height: 10),
               TextFormField(
                 controller: _timing,
-                decoration: const InputDecoration(labelText: 'التوقيت الافتراضي'),
+                decoration: const InputDecoration(
+                  labelText: 'التوقيت الافتراضي',
+                ),
               ),
               const SizedBox(height: 10),
               TextFormField(
                 controller: _notes,
-                decoration: const InputDecoration(labelText: 'ملاحظات افتراضية'),
+                decoration: const InputDecoration(
+                  labelText: 'ملاحظات افتراضية',
+                ),
                 minLines: 1,
                 maxLines: 3,
               ),
@@ -146,7 +171,10 @@ class _SupplementEditorDialogState extends State<_SupplementEditorDialog> {
         ),
       ),
       actions: [
-        TextButton(onPressed: () => Navigator.pop(context), child: const Text('إلغاء')),
+        TextButton(
+          onPressed: () => Navigator.pop(context),
+          child: const Text('إلغاء'),
+        ),
         FilledButton(
           onPressed: () {
             if (!_formKey.currentState!.validate()) return;
@@ -155,9 +183,15 @@ class _SupplementEditorDialogState extends State<_SupplementEditorDialog> {
               Supplement(
                 id: widget.existing?.id ?? const Uuid().v4(),
                 name: _name.text.trim(),
-                defaultDose: _dose.text.trim().isEmpty ? null : _dose.text.trim(),
-                defaultTiming: _timing.text.trim().isEmpty ? null : _timing.text.trim(),
-                defaultNotes: _notes.text.trim().isEmpty ? null : _notes.text.trim(),
+                defaultDose: _dose.text.trim().isEmpty
+                    ? null
+                    : _dose.text.trim(),
+                defaultTiming: _timing.text.trim().isEmpty
+                    ? null
+                    : _timing.text.trim(),
+                defaultNotes: _notes.text.trim().isEmpty
+                    ? null
+                    : _notes.text.trim(),
               ),
             );
           },

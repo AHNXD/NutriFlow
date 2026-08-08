@@ -29,7 +29,11 @@ class AsyncValueView<T> extends StatelessWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Icon(Icons.error_outline, size: 40, color: Colors.redAccent),
+              const Icon(
+                Icons.error_outline,
+                size: 40,
+                color: Colors.redAccent,
+              ),
               const SizedBox(height: 12),
               Text(
                 'تعذّر تحميل البيانات\n$err',
@@ -38,7 +42,10 @@ class AsyncValueView<T> extends StatelessWidget {
               ),
               if (onRetry != null) ...[
                 const SizedBox(height: 12),
-                OutlinedButton(onPressed: onRetry, child: const Text('إعادة المحاولة')),
+                OutlinedButton(
+                  onPressed: onRetry,
+                  child: const Text('إعادة المحاولة'),
+                ),
               ],
             ],
           ),

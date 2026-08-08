@@ -11,8 +11,9 @@ final planServiceProvider = Provider<PlanService>((ref) {
   return PlanService(ref.watch(supabaseClientProvider));
 });
 
-final planListProvider =
-    AsyncNotifierProvider<PlanListNotifier, List<Plan>>(PlanListNotifier.new);
+final planListProvider = AsyncNotifierProvider<PlanListNotifier, List<Plan>>(
+  PlanListNotifier.new,
+);
 
 class PlanListNotifier extends AsyncNotifier<List<Plan>> {
   PlanService get _service => ref.read(planServiceProvider);
@@ -59,17 +60,18 @@ class PlanDetailState {
     List<PlanDay>? days,
     List<String>? drinkIds,
     List<PlanSupplement>? supplements,
-  }) =>
-      PlanDetailState(
-        plan: plan ?? this.plan,
-        days: days ?? this.days,
-        drinkIds: drinkIds ?? this.drinkIds,
-        supplements: supplements ?? this.supplements,
-      );
+  }) => PlanDetailState(
+    plan: plan ?? this.plan,
+    days: days ?? this.days,
+    drinkIds: drinkIds ?? this.drinkIds,
+    supplements: supplements ?? this.supplements,
+  );
 }
 
-final planDetailProvider = AsyncNotifierProviderFamily<PlanDetailNotifier,
-    PlanDetailState, String>(PlanDetailNotifier.new);
+final planDetailProvider =
+    AsyncNotifierProviderFamily<PlanDetailNotifier, PlanDetailState, String>(
+      PlanDetailNotifier.new,
+    );
 
 class PlanDetailNotifier extends FamilyAsyncNotifier<PlanDetailState, String> {
   PlanService get _service => ref.read(planServiceProvider);
@@ -84,15 +86,14 @@ class PlanDetailNotifier extends FamilyAsyncNotifier<PlanDetailState, String> {
     final withMeals = <PlanDay>[];
     for (final day in days) {
       final meals = await _service.fetchMealsForDay(day.id);
-      withMeals.add(PlanDay.fromMap(
-        {
+      withMeals.add(
+        PlanDay.fromMap({
           'id': day.id,
           'plan_id': day.planId,
           'day_number': day.dayNumber,
           'motivational_text': day.motivationalText,
-        },
-        meals: meals,
-      ));
+        }, meals: meals),
+      );
     }
     final drinkIds = await _service.fetchPlanDrinkIds(_planId);
     final supplements = await _service.fetchPlanSupplements(_planId);
@@ -127,13 +128,23 @@ class PlanDetailNotifier extends FamilyAsyncNotifier<PlanDetailState, String> {
     await _service.updatePlanDayMotivationalText(dayId, text);
     final current = state.valueOrNull;
     if (current == null) return;
-    state = AsyncData(current.copyWith(days: [
-      for (final d in current.days)
-        if (d.id == dayId)
-          PlanDay(id: d.id, planId: d.planId, dayNumber: d.dayNumber, motivationalText: text, meals: d.meals)
-        else
-          d,
-    ]));
+    state = AsyncData(
+      current.copyWith(
+        days: [
+          for (final d in current.days)
+            if (d.id == dayId)
+              PlanDay(
+                id: d.id,
+                planId: d.planId,
+                dayNumber: d.dayNumber,
+                motivationalText: text,
+                meals: d.meals,
+              )
+            else
+              d,
+        ],
+      ),
+    );
   }
 
   Future<void> saveMeal(PlanMeal meal) async {
@@ -142,41 +153,50 @@ class PlanDetailNotifier extends FamilyAsyncNotifier<PlanDetailState, String> {
         : await _service.updateMeal(meal);
     final current = state.valueOrNull;
     if (current == null) return;
-    state = AsyncData(current.copyWith(days: [
-      for (final d in current.days)
-        if (d.id == meal.planDayId)
-          PlanDay(
-            id: d.id,
-            planId: d.planId,
-            dayNumber: d.dayNumber,
-            motivationalText: d.motivationalText,
-            meals: [
-              for (final m in d.meals) if (m.id == saved.id) saved else m,
-              if (!d.meals.any((m) => m.id == saved.id)) saved,
-            ],
-          )
-        else
-          d,
-    ]));
+    state = AsyncData(
+      current.copyWith(
+        days: [
+          for (final d in current.days)
+            if (d.id == meal.planDayId)
+              PlanDay(
+                id: d.id,
+                planId: d.planId,
+                dayNumber: d.dayNumber,
+                motivationalText: d.motivationalText,
+                meals: [
+                  for (final m in d.meals)
+                    if (m.id == saved.id) saved else m,
+                  if (!d.meals.any((m) => m.id == saved.id)) saved,
+                ],
+              )
+            else
+              d,
+        ],
+      ),
+    );
   }
 
   Future<void> deleteMeal(String planDayId, String mealId) async {
     await _service.deleteMeal(mealId);
     final current = state.valueOrNull;
     if (current == null) return;
-    state = AsyncData(current.copyWith(days: [
-      for (final d in current.days)
-        if (d.id == planDayId)
-          PlanDay(
-            id: d.id,
-            planId: d.planId,
-            dayNumber: d.dayNumber,
-            motivationalText: d.motivationalText,
-            meals: d.meals.where((m) => m.id != mealId).toList(),
-          )
-        else
-          d,
-    ]));
+    state = AsyncData(
+      current.copyWith(
+        days: [
+          for (final d in current.days)
+            if (d.id == planDayId)
+              PlanDay(
+                id: d.id,
+                planId: d.planId,
+                dayNumber: d.dayNumber,
+                motivationalText: d.motivationalText,
+                meals: d.meals.where((m) => m.id != mealId).toList(),
+              )
+            else
+              d,
+        ],
+      ),
+    );
   }
 
   Future<void> setDrinks(List<String> drinkIds) async {
@@ -190,24 +210,33 @@ class PlanDetailNotifier extends FamilyAsyncNotifier<PlanDetailState, String> {
     final created = await _service.createPlanSupplement(s);
     final current = state.valueOrNull;
     if (current == null) return;
-    state = AsyncData(current.copyWith(supplements: [...current.supplements, created]));
+    state = AsyncData(
+      current.copyWith(supplements: [...current.supplements, created]),
+    );
   }
 
   Future<void> updateSupplement(PlanSupplement s) async {
     final updated = await _service.updatePlanSupplement(s);
     final current = state.valueOrNull;
     if (current == null) return;
-    state = AsyncData(current.copyWith(supplements: [
-      for (final x in current.supplements) if (x.id == updated.id) updated else x,
-    ]));
+    state = AsyncData(
+      current.copyWith(
+        supplements: [
+          for (final x in current.supplements)
+            if (x.id == updated.id) updated else x,
+        ],
+      ),
+    );
   }
 
   Future<void> removeSupplement(String id) async {
     await _service.deletePlanSupplement(id);
     final current = state.valueOrNull;
     if (current == null) return;
-    state = AsyncData(current.copyWith(
-      supplements: current.supplements.where((s) => s.id != id).toList(),
-    ));
+    state = AsyncData(
+      current.copyWith(
+        supplements: current.supplements.where((s) => s.id != id).toList(),
+      ),
+    );
   }
 }

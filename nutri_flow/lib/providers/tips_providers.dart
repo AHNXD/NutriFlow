@@ -32,7 +32,8 @@ class TipListNotifier extends AsyncNotifier<List<Tip>> {
     final updated = await _service.updateTip(tip);
     final current = state.valueOrNull ?? [];
     state = AsyncData([
-      for (final t in current) if (t.id == updated.id) updated else t,
+      for (final t in current)
+        if (t.id == updated.id) updated else t,
     ]);
   }
 
@@ -43,10 +44,11 @@ class TipListNotifier extends AsyncNotifier<List<Tip>> {
   }
 }
 
-final motivationalMessageListProvider = AsyncNotifierProvider<
-    MotivationalMessageListNotifier, List<MotivationalMessage>>(
-  MotivationalMessageListNotifier.new,
-);
+final motivationalMessageListProvider =
+    AsyncNotifierProvider<
+      MotivationalMessageListNotifier,
+      List<MotivationalMessage>
+    >(MotivationalMessageListNotifier.new);
 
 class MotivationalMessageListNotifier
     extends AsyncNotifier<List<MotivationalMessage>> {
@@ -70,7 +72,8 @@ class MotivationalMessageListNotifier
     final updated = await _service.updateMotivationalMessage(m);
     final current = state.valueOrNull ?? [];
     state = AsyncData([
-      for (final x in current) if (x.id == updated.id) updated else x,
+      for (final x in current)
+        if (x.id == updated.id) updated else x,
     ]);
   }
 

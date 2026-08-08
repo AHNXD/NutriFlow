@@ -93,7 +93,9 @@ class _PlanDetailScreenState extends ConsumerState<PlanDetailScreen> {
       // iPhone/Android ignore this and always show a full sheet, so it's
       // safe to pass on every platform.
       final box = context.findRenderObject() as RenderBox?;
-      final origin = box != null ? box.localToGlobal(Offset.zero) & box.size : null;
+      final origin = box != null
+          ? box.localToGlobal(Offset.zero) & box.size
+          : null;
       await SharePlus.instance.share(
         ShareParams(
           files: [XFile(file.path)],
@@ -103,14 +105,19 @@ class _PlanDetailScreenState extends ConsumerState<PlanDetailScreen> {
       );
     } on PdfServiceNotConfiguredException {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-          content: Text('خدمة توليد PDF غير مُعدّة بعد (PDF_SERVICE_URL) — راجعي README'),
-        ));
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text(
+              'خدمة توليد PDF غير مُعدّة بعد (PDF_SERVICE_URL) — راجعي README',
+            ),
+          ),
+        );
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text('تعذّر تصدير الملف: $e')));
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('تعذّر تصدير الملف: $e')));
       }
     } finally {
       if (mounted) setState(() => _exporting = false);
@@ -122,7 +129,8 @@ class _PlanDetailScreenState extends ConsumerState<PlanDetailScreen> {
     final detail = ref.watch(planDetailProvider(widget.planId));
 
     return detail.when(
-      loading: () => const Scaffold(body: Center(child: CircularProgressIndicator())),
+      loading: () =>
+          const Scaffold(body: Center(child: CircularProgressIndicator())),
       error: (e, _) => Scaffold(
         appBar: AppBar(),
         body: Center(child: Text('تعذّر تحميل الخطة: $e')),
@@ -156,7 +164,8 @@ class _PlanDetailScreenState extends ConsumerState<PlanDetailScreen> {
               bottom: TabBar(
                 isScrollable: true,
                 tabs: [
-                  for (final day in state.days) Tab(text: 'اليوم ${day.dayNumber}'),
+                  for (final day in state.days)
+                    Tab(text: 'اليوم ${day.dayNumber}'),
                   const Tab(text: 'المشروبات والمكملات'),
                 ],
               ),

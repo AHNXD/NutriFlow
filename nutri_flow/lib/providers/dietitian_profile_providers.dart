@@ -6,17 +6,20 @@ import '../models/dietitian_profile.dart';
 import '../services/dietitian_profile_service.dart';
 import '../services/supabase_client_provider.dart';
 
-final dietitianProfileServiceProvider = Provider<DietitianProfileService>((ref) {
+final dietitianProfileServiceProvider = Provider<DietitianProfileService>((
+  ref,
+) {
   return DietitianProfileService(ref.watch(supabaseClientProvider));
 });
 
 final dietitianProfileProvider =
     AsyncNotifierProvider<DietitianProfileNotifier, DietitianProfile?>(
-  DietitianProfileNotifier.new,
-);
+      DietitianProfileNotifier.new,
+    );
 
 class DietitianProfileNotifier extends AsyncNotifier<DietitianProfile?> {
-  DietitianProfileService get _service => ref.read(dietitianProfileServiceProvider);
+  DietitianProfileService get _service =>
+      ref.read(dietitianProfileServiceProvider);
 
   @override
   Future<DietitianProfile?> build() => _service.fetch();

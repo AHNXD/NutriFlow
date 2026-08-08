@@ -7,16 +7,18 @@ class TipsService {
   final SupabaseClient _client;
 
   Future<List<Tip>> fetchTips() async {
-    final rows =
-        await _client.from('tips').select().order('category');
+    final rows = await _client.from('tips').select().order('category');
     return (rows as List)
         .map((r) => Tip.fromMap(Map<String, dynamic>.from(r as Map)))
         .toList();
   }
 
   Future<Tip> createTip(Tip tip) async {
-    final row =
-        await _client.from('tips').insert(tip.toInsertMap()).select().single();
+    final row = await _client
+        .from('tips')
+        .insert(tip.toInsertMap())
+        .select()
+        .single();
     return Tip.fromMap(row);
   }
 
@@ -39,13 +41,16 @@ class TipsService {
         .select()
         .order('created_at', ascending: false);
     return (rows as List)
-        .map((r) =>
-            MotivationalMessage.fromMap(Map<String, dynamic>.from(r as Map)))
+        .map(
+          (r) =>
+              MotivationalMessage.fromMap(Map<String, dynamic>.from(r as Map)),
+        )
         .toList();
   }
 
   Future<MotivationalMessage> createMotivationalMessage(
-      MotivationalMessage m) async {
+    MotivationalMessage m,
+  ) async {
     final row = await _client
         .from('motivational_messages')
         .insert(m.toInsertMap())
@@ -55,7 +60,8 @@ class TipsService {
   }
 
   Future<MotivationalMessage> updateMotivationalMessage(
-      MotivationalMessage m) async {
+    MotivationalMessage m,
+  ) async {
     final row = await _client
         .from('motivational_messages')
         .update(m.toInsertMap())

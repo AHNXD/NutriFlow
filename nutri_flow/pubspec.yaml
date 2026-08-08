@@ -44,7 +44,6 @@ dependencies:
   flutter_riverpod: ^2.6.1
 
   # UI / fonts (Arabic RTL — Cairo)
-  google_fonts: ^6.3.2
 
   # Recipe images
   image_picker: ^1.1.2
@@ -98,6 +97,14 @@ flutter:
 
   assets:
     - assets/images/
+
+  fonts:
+    # Same file the PDF service embeds, so the app and the document it
+    # exports are set in one typeface. Variable font: Flutter drives the
+    # `wght` axis from the requested FontWeight.
+    - family: Cairo
+      fonts:
+        - asset: assets/fonts/Cairo-Variable.ttf
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

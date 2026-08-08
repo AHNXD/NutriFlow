@@ -33,10 +33,10 @@ class PdfLayoutPicker extends StatelessWidget {
         Text('تصميم قالب PDF', style: Theme.of(context).textTheme.titleSmall),
         const SizedBox(height: 4),
         Text(
-          'اختاري شكل الصفحات — يعمل أي تصميم مع أي لون.',
+          'شكل الصفحات — يعمل أي تصميم مع أي لون.',
           style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                color: Theme.of(context).colorScheme.onSurfaceVariant,
-              ),
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
+          ),
         ),
         const SizedBox(height: 12),
         SizedBox(
@@ -121,8 +121,10 @@ class _LayoutOption extends StatelessWidget {
                     layout.labelAr,
                     overflow: TextOverflow.ellipsis,
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          fontWeight: isSelected ? FontWeight.w700 : FontWeight.w400,
-                        ),
+                      fontWeight: isSelected
+                          ? FontWeight.w700
+                          : FontWeight.w400,
+                    ),
                   ),
                 ),
               ],
@@ -179,175 +181,173 @@ class _CoverMiniature extends StatelessWidget {
 
   // Full-bleed gradient, white badge, centred stack.
   Widget _aurora() => Container(
-        decoration: BoxDecoration(gradient: theme.gradient),
-        padding: const EdgeInsets.symmetric(horizontal: 10),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Container(
-              width: 16,
-              height: 16,
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(5),
-              ),
-            ),
-            const SizedBox(height: 7),
-            _bar(0.7, Colors.white, height: 5),
-            const SizedBox(height: 4),
-            _bar(0.35, Colors.white70),
-            const SizedBox(height: 9),
-            Container(
-              height: 22,
-              decoration: BoxDecoration(
-                color: Colors.white24,
-                borderRadius: BorderRadius.circular(5),
-              ),
-            ),
-          ],
+    decoration: BoxDecoration(gradient: theme.gradient),
+    padding: const EdgeInsets.symmetric(horizontal: 10),
+    child: Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Container(
+          width: 16,
+          height: 16,
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(5),
+          ),
         ),
-      );
+        const SizedBox(height: 7),
+        _bar(0.7, Colors.white, height: 5),
+        const SizedBox(height: 4),
+        _bar(0.35, Colors.white70),
+        const SizedBox(height: 9),
+        Container(
+          height: 22,
+          decoration: BoxDecoration(
+            color: Colors.white24,
+            borderRadius: BorderRadius.circular(5),
+          ),
+        ),
+      ],
+    ),
+  );
 
   // White sheet, accent spine down the binding edge, big display type.
   Widget _editorial() => Container(
-        color: Colors.white,
-        child: Row(
-          children: [
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(8, 8, 6, 8),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    _bar(0.55, Colors.black26, height: 2),
-                    const Spacer(),
-                    _bar(0.85, Colors.black87, height: 8),
-                    const SizedBox(height: 3),
-                    _bar(0.6, theme.primary, height: 8),
-                    const SizedBox(height: 6),
-                    _bar(0.3, Colors.black54, height: 2),
-                    const Spacer(),
-                    _bar(1, Colors.black26, height: 1),
-                    const SizedBox(height: 4),
-                    _bar(0.9, Colors.black38, height: 2),
-                  ],
-                ),
-              ),
-            ),
-            Container(width: 5, color: theme.primary),
-          ],
-        ),
-      );
-
-  // Lots of white, one hairline, small centred marks.
-  Widget _minimal() => Container(
-        color: Colors.white,
-        padding: const EdgeInsets.symmetric(horizontal: 14),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Container(
-              width: 11,
-              height: 11,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                border: Border.all(color: Colors.black26),
-              ),
-            ),
-            const SizedBox(height: 10),
-            _bar(0.8, Colors.black45, height: 4),
-            const SizedBox(height: 8),
-            _bar(0.25, theme.primary, height: 1),
-            const SizedBox(height: 8),
-            _bar(0.5, Colors.black26, height: 3),
-            const SizedBox(height: 12),
-            _bar(0.7, Colors.black12, height: 1),
-            const SizedBox(height: 5),
-            _bar(0.7, Colors.black12, height: 1),
-          ],
-        ),
-      );
-
-  // Tinted ground with a floating white rounded card.
-  Widget _bloom() => Container(
-        decoration: BoxDecoration(gradient: theme.gradient),
-        padding: const EdgeInsets.all(9),
-        child: Center(
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(9),
-            ),
+    color: Colors.white,
+    child: Row(
+      children: [
+        Expanded(
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(8, 8, 6, 8),
             child: Column(
-              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.end,
               children: [
-                Container(
-                  width: 14,
-                  height: 14,
-                  decoration: BoxDecoration(
-                    color: theme.primary.withValues(alpha: 0.15),
-                    borderRadius: BorderRadius.circular(5),
-                  ),
-                ),
-                const SizedBox(height: 7),
-                _bar(0.85, theme.primary, height: 4),
+                _bar(0.55, Colors.black26, height: 2),
+                const Spacer(),
+                _bar(0.85, Colors.black87, height: 8),
+                const SizedBox(height: 3),
+                _bar(0.6, theme.primary, height: 8),
+                const SizedBox(height: 6),
+                _bar(0.3, Colors.black54, height: 2),
+                const Spacer(),
+                _bar(1, Colors.black26, height: 1),
                 const SizedBox(height: 4),
-                _bar(0.5, Colors.black26, height: 2),
-                const SizedBox(height: 7),
-                Row(
-                  children: [
-                    for (var i = 0; i < 3; i++) ...[
-                      if (i > 0) const SizedBox(width: 3),
-                      Expanded(
-                        child: Container(
-                          height: 9,
-                          decoration: BoxDecoration(
-                            color: theme.primary.withValues(alpha: 0.12),
-                            borderRadius: BorderRadius.circular(3),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ],
-                ),
+                _bar(0.9, Colors.black38, height: 2),
               ],
             ),
           ),
         ),
-      );
+        Container(width: 5, color: theme.primary),
+      ],
+    ),
+  );
+
+  // Lots of white, one hairline, small centred marks.
+  Widget _minimal() => Container(
+    color: Colors.white,
+    padding: const EdgeInsets.symmetric(horizontal: 14),
+    child: Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Container(
+          width: 11,
+          height: 11,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            border: Border.all(color: Colors.black26),
+          ),
+        ),
+        const SizedBox(height: 10),
+        _bar(0.8, Colors.black45, height: 4),
+        const SizedBox(height: 8),
+        _bar(0.25, theme.primary, height: 1),
+        const SizedBox(height: 8),
+        _bar(0.5, Colors.black26, height: 3),
+        const SizedBox(height: 12),
+        _bar(0.7, Colors.black12, height: 1),
+        const SizedBox(height: 5),
+        _bar(0.7, Colors.black12, height: 1),
+      ],
+    ),
+  );
+
+  // Tinted ground with a floating white rounded card.
+  Widget _bloom() => Container(
+    decoration: BoxDecoration(gradient: theme.gradient),
+    padding: const EdgeInsets.all(9),
+    child: Center(
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(9),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: 14,
+              height: 14,
+              decoration: BoxDecoration(
+                color: theme.primary.withValues(alpha: 0.15),
+                borderRadius: BorderRadius.circular(5),
+              ),
+            ),
+            const SizedBox(height: 7),
+            _bar(0.85, theme.primary, height: 4),
+            const SizedBox(height: 4),
+            _bar(0.5, Colors.black26, height: 2),
+            const SizedBox(height: 7),
+            Row(
+              children: [
+                for (var i = 0; i < 3; i++) ...[
+                  if (i > 0) const SizedBox(width: 3),
+                  Expanded(
+                    child: Container(
+                      height: 9,
+                      decoration: BoxDecoration(
+                        color: theme.primary.withValues(alpha: 0.12),
+                        borderRadius: BorderRadius.circular(3),
+                      ),
+                    ),
+                  ),
+                ],
+              ],
+            ),
+          ],
+        ),
+      ),
+    ),
+  );
 
   // Near-black sheet inside a hairline frame.
   Widget _noir() => Container(
-        color: _noirInk,
-        padding: const EdgeInsets.all(6),
-        child: Container(
-          decoration: BoxDecoration(
-            border: Border.all(color: Colors.white24),
+    color: _noirInk,
+    padding: const EdgeInsets.all(6),
+    child: Container(
+      decoration: BoxDecoration(border: Border.all(color: Colors.white24)),
+      padding: const EdgeInsets.symmetric(horizontal: 8),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Container(
+            width: 12,
+            height: 12,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              border: Border.all(color: Colors.white30),
+            ),
           ),
-          padding: const EdgeInsets.symmetric(horizontal: 8),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Container(
-                width: 12,
-                height: 12,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  border: Border.all(color: Colors.white30),
-                ),
-              ),
-              const SizedBox(height: 9),
-              _bar(0.7, Colors.white70, height: 4),
-              const SizedBox(height: 3),
-              _bar(0.55, Colors.white, height: 4),
-              const SizedBox(height: 7),
-              _bar(0.22, theme.secondary, height: 1),
-              const SizedBox(height: 7),
-              _bar(0.45, Colors.white38, height: 2),
-            ],
-          ),
-        ),
-      );
+          const SizedBox(height: 9),
+          _bar(0.7, Colors.white70, height: 4),
+          const SizedBox(height: 3),
+          _bar(0.55, Colors.white, height: 4),
+          const SizedBox(height: 7),
+          _bar(0.22, theme.secondary, height: 1),
+          const SizedBox(height: 7),
+          _bar(0.45, Colors.white38, height: 2),
+        ],
+      ),
+    ),
+  );
 }

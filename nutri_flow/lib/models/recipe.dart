@@ -25,32 +25,30 @@ class Recipe {
   });
 
   factory Recipe.fromMap(Map<String, dynamic> map) => Recipe(
-        id: map['id'] as String,
-        name: map['name'] as String? ?? '',
-        mealType: MealType.fromValue(map['meal_type'] as String? ?? 'snack'),
-        imageUrl: map['image_url'] as String?,
-        ingredients: Ingredient.listFromJson(map['ingredients']),
-        steps: (map['steps'] as List?)?.map((e) => e.toString()).toList() ??
-            const [],
-        tip: map['tip'] as String?,
-        tags:
-            (map['tags'] as List?)?.map((e) => e.toString()).toList() ??
-                const [],
-        createdAt: map['created_at'] != null
-            ? DateTime.tryParse(map['created_at'] as String)
-            : null,
-      );
+    id: map['id'] as String,
+    name: map['name'] as String? ?? '',
+    mealType: MealType.fromValue(map['meal_type'] as String? ?? 'snack'),
+    imageUrl: map['image_url'] as String?,
+    ingredients: Ingredient.listFromJson(map['ingredients']),
+    steps:
+        (map['steps'] as List?)?.map((e) => e.toString()).toList() ?? const [],
+    tip: map['tip'] as String?,
+    tags: (map['tags'] as List?)?.map((e) => e.toString()).toList() ?? const [],
+    createdAt: map['created_at'] != null
+        ? DateTime.tryParse(map['created_at'] as String)
+        : null,
+  );
 
   /// Fields to send on insert/update. `id`/`created_at` are DB-managed.
   Map<String, dynamic> toInsertMap() => {
-        'name': name,
-        'meal_type': mealType.value,
-        'image_url': imageUrl,
-        'ingredients': Ingredient.listToJson(ingredients),
-        'steps': steps,
-        'tip': tip,
-        'tags': tags,
-      };
+    'name': name,
+    'meal_type': mealType.value,
+    'image_url': imageUrl,
+    'ingredients': Ingredient.listToJson(ingredients),
+    'steps': steps,
+    'tip': tip,
+    'tags': tags,
+  };
 
   Recipe copyWith({
     String? id,
@@ -62,16 +60,15 @@ class Recipe {
     List<String>? steps,
     String? tip,
     List<String>? tags,
-  }) =>
-      Recipe(
-        id: id ?? this.id,
-        name: name ?? this.name,
-        mealType: mealType ?? this.mealType,
-        imageUrl: clearImageUrl ? null : (imageUrl ?? this.imageUrl),
-        ingredients: ingredients ?? this.ingredients,
-        steps: steps ?? this.steps,
-        tip: tip ?? this.tip,
-        tags: tags ?? this.tags,
-        createdAt: createdAt,
-      );
+  }) => Recipe(
+    id: id ?? this.id,
+    name: name ?? this.name,
+    mealType: mealType ?? this.mealType,
+    imageUrl: clearImageUrl ? null : (imageUrl ?? this.imageUrl),
+    ingredients: ingredients ?? this.ingredients,
+    steps: steps ?? this.steps,
+    tip: tip ?? this.tip,
+    tags: tags ?? this.tags,
+    createdAt: createdAt,
+  );
 }

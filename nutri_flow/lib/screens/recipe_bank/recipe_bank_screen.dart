@@ -7,6 +7,7 @@ import '../../providers/recipe_providers.dart';
 import '../../widgets/async_value_view.dart';
 import '../../widgets/confirm_delete_dialog.dart';
 import '../../widgets/empty_state.dart';
+import '../../widgets/layout.dart';
 import 'recipe_form_screen.dart';
 
 class RecipeBankScreen extends ConsumerWidget {
@@ -27,77 +28,90 @@ class RecipeBankScreen extends ConsumerWidget {
         icon: const Icon(Icons.add),
         label: const Text('أكلة جديدة'),
       ),
-      body: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.fromLTRB(16, 12, 16, 4),
-            child: TextField(
-              decoration: const InputDecoration(
-                prefixIcon: Icon(Icons.search),
-                hintText: 'ابحث باسم الأكلة أو الوسم...',
-              ),
-              onChanged: (v) => ref
-                  .read(recipeBankFilterProvider.notifier)
-                  .update((s) => s.copyWith(query: v)),
-            ),
-          ),
-          SizedBox(
-            height: 44,
-            child: ListView(
-              scrollDirection: Axis.horizontal,
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-              children: [
-                _FilterChip(
-                  label: 'الكل',
-                  selected: filter.mealType == null,
-                  onTap: () => ref
-                      .read(recipeBankFilterProvider.notifier)
-                      .update((s) => s.copyWith(clearMealType: true)),
+      body: PageBody(
+        padding: EdgeInsets.zero,
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 12, 16, 4),
+              child: TextField(
+                decoration: const InputDecoration(
+                  prefixIcon: Icon(Icons.search),
+                  hintText: 'بحث بالاسم أو الوسم...',
                 ),
-                for (final type in MealType.values)
+                onChanged: (v) => ref
+                    .read(recipeBankFilterProvider.notifier)
+                    .update((s) => s.copyWith(query: v)),
+              ),
+            ),
+            SizedBox(
+              height: 44,
+              child: ListView(
+                scrollDirection: Axis.horizontal,
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 4,
+                ),
+                children: [
                   _FilterChip(
-                    label: type.labelAr,
-                    selected: filter.mealType == type,
+                    label: 'الكل',
+                    selected: filter.mealType == null,
                     onTap: () => ref
                         .read(recipeBankFilterProvider.notifier)
-                        .update((s) => s.copyWith(mealType: type)),
+                        .update((s) => s.copyWith(clearMealType: true)),
                   ),
-              ],
-            ),
-          ),
-          Expanded(
-            child: AsyncValueView<Recipe>(
-              value: filtered,
-              onRetry: () => ref.read(recipeListProvider.notifier).refresh(),
-              emptyBuilder: (context) => const EmptyState(
-                icon: Icons.restaurant_menu,
-                title: 'لا توجد أكلات بعد',
-                subtitle: 'اضغطي على "أكلة جديدة" لإضافة أول وصفة للبنك',
+                  for (final type in MealType.values)
+                    _FilterChip(
+                      label: type.labelAr,
+                      selected: filter.mealType == type,
+                      onTap: () => ref
+                          .read(recipeBankFilterProvider.notifier)
+                          .update((s) => s.copyWith(mealType: type)),
+                    ),
+                ],
               ),
-              data: (context, recipes) => RefreshIndicator(
-                onRefresh: () => ref.read(recipeListProvider.notifier).refresh(),
-                child: GridView.builder(
-                  padding: const EdgeInsets.fromLTRB(16, 8, 16, 96),
-                  gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-                    maxCrossAxisExtent: 260,
-                    mainAxisSpacing: 12,
-                    crossAxisSpacing: 12,
-                    childAspectRatio: 0.82,
+            ),
+            Expanded(
+              child: AsyncValueView<Recipe>(
+                value: filtered,
+                onRetry: () => ref.read(recipeListProvider.notifier).refresh(),
+                emptyBuilder: (context) => const EmptyState(
+                  icon: Icons.restaurant_menu,
+                  title: 'لا توجد أكلات بعد',
+                  subtitle: 'يمكن إضافة أول وصفة من زر "أكلة جديدة"',
+                ),
+                data: (context, recipes) => RefreshIndicator(
+                  onRefresh: () =>
+                      ref.read(recipeListProvider.notifier).refresh(),
+                  child: GridView.builder(
+                    padding: const EdgeInsets.fromLTRB(16, 8, 16, 96),
+                    gridDelegate:
+                        const SliverGridDelegateWithMaxCrossAxisExtent(
+                          maxCrossAxisExtent: 260,
+                          mainAxisSpacing: 12,
+                          crossAxisSpacing: 12,
+                          childAspectRatio: 0.82,
+                        ),
+                    itemCount: recipes.length,
+                    itemBuilder: (context, i) =>
+                        _RecipeCard(recipe: recipes[i]),
                   ),
-                  itemCount: recipes.length,
-                  itemBuilder: (context, i) => _RecipeCard(recipe: recipes[i]),
                 ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
 }
 
 class _FilterChip extends StatelessWidget {
-  const _FilterChip({required this.label, required this.selected, required this.onTap});
+  const _FilterChip({
+    required this.label,
+    required this.selected,
+    required this.onTap,
+  });
 
   final String label;
   final bool selected;
@@ -186,10 +200,9 @@ class _RecipeCard extends ConsumerWidget {
                   const SizedBox(height: 2),
                   Text(
                     recipe.mealType.labelAr,
-                    style: Theme.of(context)
-                        .textTheme
-                        .bodySmall
-                        ?.copyWith(color: Colors.black54),
+                    style: Theme.of(
+                      context,
+                    ).textTheme.bodySmall?.copyWith(color: Colors.black54),
                   ),
                 ],
               ),

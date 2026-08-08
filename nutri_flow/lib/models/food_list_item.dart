@@ -7,9 +7,9 @@ enum FoodListType {
   const FoodListType(this.value, this.labelAr);
 
   static FoodListType fromValue(String value) => FoodListType.values.firstWhere(
-        (e) => e.value == value,
-        orElse: () => FoodListType.allowed,
-      );
+    (e) => e.value == value,
+    orElse: () => FoodListType.allowed,
+  );
 }
 
 class FoodListItem {
@@ -26,15 +26,15 @@ class FoodListItem {
   });
 
   factory FoodListItem.fromMap(Map<String, dynamic> map) => FoodListItem(
-        id: map['id'] as String,
-        listType: FoodListType.fromValue(map['list_type'] as String? ?? 'allowed'),
-        category: map['category'] as String? ?? '',
-        item: map['item'] as String? ?? '',
-      );
+    id: map['id'] as String,
+    listType: FoodListType.fromValue(map['list_type'] as String? ?? 'allowed'),
+    category: map['category'] as String? ?? '',
+    item: map['item'] as String? ?? '',
+  );
 
   Map<String, dynamic> toInsertMap() => {
-        'list_type': listType.value,
-        'category': category,
-        'item': item,
-      };
+    'list_type': listType.value,
+    'category': category,
+    'item': item,
+  };
 }

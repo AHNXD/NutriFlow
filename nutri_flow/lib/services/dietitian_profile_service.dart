@@ -23,7 +23,9 @@ class DietitianProfileService {
   Future<DietitianProfile?> fetch() async {
     final rows = await _client.from('dietitian_profile').select().limit(1);
     if ((rows as List).isEmpty) return null;
-    return DietitianProfile.fromMap(Map<String, dynamic>.from(rows.first as Map));
+    return DietitianProfile.fromMap(
+      Map<String, dynamic>.from(rows.first as Map),
+    );
   }
 
   /// Creates the single row on first save, updates it on every save after.
@@ -61,10 +63,15 @@ class DietitianProfileService {
       }
     }
 
-    await _client.storage.from(_bucket).uploadBinary(
+    await _client.storage
+        .from(_bucket)
+        .uploadBinary(
           _logoPath,
           toUpload,
-          fileOptions: const FileOptions(contentType: 'image/jpeg', upsert: true),
+          fileOptions: const FileOptions(
+            contentType: 'image/jpeg',
+            upsert: true,
+          ),
         );
     final publicUrl = _client.storage.from(_bucket).getPublicUrl(_logoPath);
     return '$publicUrl?v=${const Uuid().v4()}';

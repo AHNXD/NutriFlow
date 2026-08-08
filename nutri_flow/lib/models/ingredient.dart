@@ -8,16 +8,16 @@ class Ingredient {
   const Ingredient({required this.item, this.amount = '', this.unit = ''});
 
   factory Ingredient.fromMap(Map<String, dynamic> map) => Ingredient(
-        item: map['item'] as String? ?? '',
-        amount: map['amount']?.toString() ?? '',
-        unit: map['unit'] as String? ?? '',
-      );
+    item: map['item'] as String? ?? '',
+    amount: map['amount']?.toString() ?? '',
+    unit: map['unit'] as String? ?? '',
+  );
 
   Map<String, dynamic> toMap() => {
-        'item': item,
-        'amount': amount,
-        'unit': unit,
-      };
+    'item': item,
+    'amount': amount,
+    'unit': unit,
+  };
 
   Ingredient copyWith({String? item, String? amount, String? unit}) =>
       Ingredient(

@@ -83,7 +83,9 @@ class RecipeService {
     }
 
     final path = '$recipeId.jpg';
-    await _client.storage.from(_bucket).uploadBinary(
+    await _client.storage
+        .from(_bucket)
+        .uploadBinary(
           path,
           toUpload,
           fileOptions: const FileOptions(

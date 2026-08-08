@@ -5,6 +5,7 @@ import 'package:uuid/uuid.dart';
 import '../../models/tip.dart';
 import '../../providers/tips_providers.dart';
 import '../../widgets/async_value_view.dart';
+import '../../widgets/layout.dart';
 import '../../widgets/confirm_delete_dialog.dart';
 import '../../widgets/empty_state.dart';
 import '../../widgets/text_field_dialog.dart';
@@ -19,14 +20,14 @@ class TipsBankScreen extends StatelessWidget {
       child: Scaffold(
         appBar: AppBar(
           title: const Text('بنك النصائح'),
-          bottom: const TabBar(tabs: [
-            Tab(text: 'نصائح'),
-            Tab(text: 'رسائل تحفيزية'),
-          ]),
+          bottom: const TabBar(
+            tabs: [
+              Tab(text: 'نصائح'),
+              Tab(text: 'رسائل تحفيزية'),
+            ],
+          ),
         ),
-        body: const TabBarView(
-          children: [_TipsTab(), _MotivationalTab()],
-        ),
+        body: const TabBarView(children: [_TipsTab(), _MotivationalTab()]),
       ),
     );
   }
@@ -35,7 +36,11 @@ class TipsBankScreen extends StatelessWidget {
 class _TipsTab extends ConsumerWidget {
   const _TipsTab();
 
-  Future<void> _openEditor(BuildContext context, WidgetRef ref, {Tip? existing}) async {
+  Future<void> _openEditor(
+    BuildContext context,
+    WidgetRef ref, {
+    Tip? existing,
+  }) async {
     final result = await showDialog<(String, TipCategory)>(
       context: context,
       builder: (context) => _TipEditorDialog(existing: existing),
@@ -43,9 +48,13 @@ class _TipsTab extends ConsumerWidget {
     if (result == null) return;
     final notifier = ref.read(tipListProvider.notifier);
     if (existing == null) {
-      await notifier.create(Tip(id: const Uuid().v4(), text: result.$1, category: result.$2));
+      await notifier.create(
+        Tip(id: const Uuid().v4(), text: result.$1, category: result.$2),
+      );
     } else {
-      await notifier.updateTip(Tip(id: existing.id, text: result.$1, category: result.$2));
+      await notifier.updateTip(
+        Tip(id: existing.id, text: result.$1, category: result.$2),
+      );
     }
   }
 
@@ -58,43 +67,52 @@ class _TipsTab extends ConsumerWidget {
         icon: const Icon(Icons.add),
         label: const Text('نصيحة جديدة'),
       ),
-      body: AsyncValueView<Tip>(
-        value: tips,
-        onRetry: () => ref.read(tipListProvider.notifier).refresh(),
-        emptyBuilder: (context) => const EmptyState(
-          icon: Icons.lightbulb_outline,
-          title: 'لا توجد نصائح بعد',
-        ),
-        data: (context, list) => ListView.separated(
-          padding: const EdgeInsets.fromLTRB(12, 12, 12, 96),
-          itemCount: list.length,
-          separatorBuilder: (_, _) => const SizedBox(height: 6),
-          itemBuilder: (context, i) {
-            final tip = list[i];
-            return Card(
-              child: ListTile(
-                title: Text(tip.text),
-                subtitle: Text(tip.category.labelAr),
-                trailing: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    IconButton(
-                      icon: const Icon(Icons.edit_outlined),
-                      onPressed: () => _openEditor(context, ref, existing: tip),
-                    ),
-                    IconButton(
-                      icon: const Icon(Icons.delete_outline),
-                      onPressed: () async {
-                        if (await confirmDelete(context, title: 'حذف هذه النصيحة؟')) {
-                          await ref.read(tipListProvider.notifier).delete(tip.id);
-                        }
-                      },
-                    ),
-                  ],
+      body: PageBody(
+        padding: EdgeInsets.zero,
+        child: AsyncValueView<Tip>(
+          value: tips,
+          onRetry: () => ref.read(tipListProvider.notifier).refresh(),
+          emptyBuilder: (context) => const EmptyState(
+            icon: Icons.lightbulb_outline,
+            title: 'لا توجد نصائح بعد',
+          ),
+          data: (context, list) => ListView.separated(
+            padding: const EdgeInsets.fromLTRB(12, 12, 12, 96),
+            itemCount: list.length,
+            separatorBuilder: (_, _) => const SizedBox(height: 6),
+            itemBuilder: (context, i) {
+              final tip = list[i];
+              return Card(
+                child: ListTile(
+                  title: Text(tip.text),
+                  subtitle: Text(tip.category.labelAr),
+                  trailing: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      IconButton(
+                        icon: const Icon(Icons.edit_outlined),
+                        onPressed: () =>
+                            _openEditor(context, ref, existing: tip),
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.delete_outline),
+                        onPressed: () async {
+                          if (await confirmDelete(
+                            context,
+                            title: 'حذف هذه النصيحة؟',
+                          )) {
+                            await ref
+                                .read(tipListProvider.notifier)
+                                .delete(tip.id);
+                          }
+                        },
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-            );
-          },
+              );
+            },
+          ),
         ),
       ),
     );
@@ -152,7 +170,10 @@ class _TipEditorDialogState extends State<_TipEditorDialog> {
         ],
       ),
       actions: [
-        TextButton(onPressed: () => Navigator.pop(context), child: const Text('إلغاء')),
+        TextButton(
+          onPressed: () => Navigator.pop(context),
+          child: const Text('إلغاء'),
+        ),
         FilledButton(
           onPressed: () {
             final text = _controller.text.trim();
@@ -189,55 +210,64 @@ class _MotivationalTab extends ConsumerWidget {
         icon: const Icon(Icons.add),
         label: const Text('رسالة جديدة'),
       ),
-      body: AsyncValueView(
-        value: messages,
-        onRetry: () => ref.read(motivationalMessageListProvider.notifier).refresh(),
-        emptyBuilder: (context) => const EmptyState(
-          icon: Icons.emoji_events_outlined,
-          title: 'لا توجد رسائل تحفيزية بعد',
-        ),
-        data: (context, list) => ListView.separated(
-          padding: const EdgeInsets.fromLTRB(12, 12, 12, 96),
-          itemCount: list.length,
-          separatorBuilder: (_, _) => const SizedBox(height: 6),
-          itemBuilder: (context, i) {
-            final m = list[i];
-            return Card(
-              child: ListTile(
-                title: Text(m.text),
-                trailing: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    IconButton(
-                      icon: const Icon(Icons.edit_outlined),
-                      onPressed: () async {
-                        final text = await showTextFieldDialog(
-                          context,
-                          title: 'تعديل الرسالة',
-                          initial: m.text,
-                        );
-                        if (text != null) {
-                          await ref
-                              .read(motivationalMessageListProvider.notifier)
-                              .updateMessage(MotivationalMessage(id: m.id, text: text));
-                        }
-                      },
-                    ),
-                    IconButton(
-                      icon: const Icon(Icons.delete_outline),
-                      onPressed: () async {
-                        if (await confirmDelete(context, title: 'حذف هذه الرسالة؟')) {
-                          await ref
-                              .read(motivationalMessageListProvider.notifier)
-                              .delete(m.id);
-                        }
-                      },
-                    ),
-                  ],
+      body: PageBody(
+        padding: EdgeInsets.zero,
+        child: AsyncValueView(
+          value: messages,
+          onRetry: () =>
+              ref.read(motivationalMessageListProvider.notifier).refresh(),
+          emptyBuilder: (context) => const EmptyState(
+            icon: Icons.emoji_events_outlined,
+            title: 'لا توجد رسائل تحفيزية بعد',
+          ),
+          data: (context, list) => ListView.separated(
+            padding: const EdgeInsets.fromLTRB(12, 12, 12, 96),
+            itemCount: list.length,
+            separatorBuilder: (_, _) => const SizedBox(height: 6),
+            itemBuilder: (context, i) {
+              final m = list[i];
+              return Card(
+                child: ListTile(
+                  title: Text(m.text),
+                  trailing: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      IconButton(
+                        icon: const Icon(Icons.edit_outlined),
+                        onPressed: () async {
+                          final text = await showTextFieldDialog(
+                            context,
+                            title: 'تعديل الرسالة',
+                            initial: m.text,
+                          );
+                          if (text != null) {
+                            await ref
+                                .read(motivationalMessageListProvider.notifier)
+                                .updateMessage(
+                                  MotivationalMessage(id: m.id, text: text),
+                                );
+                          }
+                        },
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.delete_outline),
+                        onPressed: () async {
+                          if (await confirmDelete(
+                            context,
+                            title: 'حذف هذه الرسالة؟',
+                          )) {
+                            await ref
+                                .read(motivationalMessageListProvider.notifier)
+                                .delete(m.id);
+                          }
+                        },
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-            );
-          },
+              );
+            },
+          ),
         ),
       ),
     );

@@ -31,14 +31,18 @@ class _IngredientListEditorState extends State<IngredientListEditor> {
   }
 
   void _emit() {
-    widget.onChanged(_rows
-        .where((r) => r.item.text.trim().isNotEmpty)
-        .map((r) => Ingredient(
+    widget.onChanged(
+      _rows
+          .where((r) => r.item.text.trim().isNotEmpty)
+          .map(
+            (r) => Ingredient(
               item: r.item.text.trim(),
               amount: r.amount.text.trim(),
               unit: r.unit.text.trim(),
-            ))
-        .toList());
+            ),
+          )
+          .toList(),
+    );
   }
 
   @override
@@ -101,10 +105,10 @@ class _IngredientListEditorState extends State<IngredientListEditor> {
                   onPressed: _rows.length == 1
                       ? null
                       : () => setState(() {
-                            _rows[i].dispose();
-                            _rows.removeAt(i);
-                            _emit();
-                          }),
+                          _rows[i].dispose();
+                          _rows.removeAt(i);
+                          _emit();
+                        }),
                 ),
               ],
             ),
@@ -120,9 +124,9 @@ class _Row {
   final TextEditingController unit;
 
   _Row()
-      : item = TextEditingController(),
-        amount = TextEditingController(),
-        unit = TextEditingController();
+    : item = TextEditingController(),
+      amount = TextEditingController(),
+      unit = TextEditingController();
 
   factory _Row.fromIngredient(Ingredient i) {
     final row = _Row();
