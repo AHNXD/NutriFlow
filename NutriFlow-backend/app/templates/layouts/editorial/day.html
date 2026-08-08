@@ -1,0 +1,49 @@
+<div class="page numbered">
+  <div class="ghost-num">{{ day.day_number }}</div>
+
+  <div class="page-header">
+    <div class="hdr-row">
+      <div class="hdr-titles">
+        <div class="eyebrow">NUTRIFLOW</div>
+        <div class="title">اليوم {{ day.day_number }}</div>
+      </div>
+      <div class="hdr-patient">
+        الخطة الغذائية
+        <strong>{{ plan.patient_name }}</strong>
+      </div>
+    </div>
+  </div>
+
+  {% if day.motivational_text %}
+  <div class="pull-quote">{{ day.motivational_text }}</div>
+  {% endif %}
+
+  {% if day.meal_views %}
+  <div class="meal-list">
+    {% for meal in day.meal_views %}
+    <div class="meal-item">
+      <div class="mi-row">
+        <div class="mi-index">{{ "%02d"|format(loop.index) }}</div>
+        <div class="mi-body">
+          <div class="mi-type">{{ meal.label }}</div>
+          <div class="mi-name">{{ meal.name }}</div>
+          {% if meal.ingredients %}
+          {# Inline, middot-separated — a bulleted block would break the
+             editorial rhythm of this layout. #}
+          <div class="mi-ings">{{ meal.ingredients|join("  ·  ") }}</div>
+          {% endif %}
+          {% if meal.tip %}
+          <div class="mi-tip"><strong>نصيحة</strong> — {{ meal.tip }}</div>
+          {% endif %}
+        </div>
+        {% if meal.image_url %}
+        <div class="mi-photo"><img src="{{ meal.image_url }}" /></div>
+        {% endif %}
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  {% else %}
+  <p class="no-content">لم تُضَف وجبات لهذا اليوم بعد.</p>
+  {% endif %}
+</div>

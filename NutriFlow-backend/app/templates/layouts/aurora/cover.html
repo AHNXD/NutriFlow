@@ -1,7 +1,10 @@
 <div class="page cover brand-gradient">
+  <div class="deco-dots"></div>
   <div class="deco-blob b1"></div>
   <div class="deco-blob b2"></div>
   <div class="deco-blob b3"></div>
+  <div class="deco-ring r1"></div>
+  <div class="deco-ring r2"></div>
 
   <div class="cover-content">
     <div class="clinic-badge">
@@ -12,10 +15,10 @@
       {% endif %}
     </div>
 
-    <div class="eyebrow-label">NutriFlow</div>
-    <div class="cover-title">الخطة الغذائية الأسبوعية</div>
-    <div class="cover-title-underline"></div>
-    <div class="cover-sub">مُعدّة خصيصًا لك</div>
+    <div class="eyebrow-label">NUTRIFLOW</div>
+    <div class="cover-title">الخطة الغذائية</div>
+    <div class="cover-rule"></div>
+    <div class="cover-sub">مُعدّة خصيصًا لكِ — {{ plan.patient_name }}</div>
 
     <div class="cover-meta">
       <div class="meta-row">
@@ -36,6 +39,21 @@
         <span class="meta-value">{{ plan.fasting_hours }} ساعة</span>
       </div>
       {% endif %}
+    </div>
+
+    <div class="cover-stats">
+      <div class="stat">
+        <div class="stat-num">{{ stats.days }}</div>
+        <div class="stat-label">أيام</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">{{ stats.meals }}</div>
+        <div class="stat-label">وجبة</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">{{ stats.supplements }}</div>
+        <div class="stat-label">مكمّل</div>
+      </div>
     </div>
 
     {% if dietitian.name %}

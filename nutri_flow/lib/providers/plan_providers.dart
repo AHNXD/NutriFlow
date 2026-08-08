@@ -116,6 +116,13 @@ class PlanDetailNotifier extends FamilyAsyncNotifier<PlanDetailState, String> {
     state = AsyncData(current.copyWith(plan: updated));
   }
 
+  Future<void> updatePdfLayout(String layout) async {
+    final updated = await _service.updatePdfLayout(_planId, layout);
+    final current = state.valueOrNull;
+    if (current == null) return;
+    state = AsyncData(current.copyWith(plan: updated));
+  }
+
   Future<void> setDayMotivationalText(String dayId, String? text) async {
     await _service.updatePlanDayMotivationalText(dayId, text);
     final current = state.valueOrNull;

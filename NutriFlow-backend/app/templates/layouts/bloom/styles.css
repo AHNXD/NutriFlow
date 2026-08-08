@@ -1,0 +1,545 @@
+/* ============================================================
+   BLOOM — soft wellness. Tinted paper, white rounded cards, pill
+   labels, generous corner radii and decorative circles.
+
+   The paper tint is set on `body`, not `.page`: a body background
+   propagates to the page canvas and so covers the whole sheet, while a
+   .page background stops at the box, which on numbered pages ends
+   ~11mm short of the paper edge (that strip is the page-number margin).
+
+   Physical properties only; no box-shadow, no flex gap, no logical
+   properties, no `transparent` inside gradients — see shared.css.
+   ============================================================ */
+
+body {
+  background: var(--soft);
+  font-size: 12px;
+}
+
+.page {
+  padding: 26px 30px 22px 30px;
+}
+
+.brand-gradient {
+  background: linear-gradient(155deg, var(--secondary) 0%, var(--primary) 55%, var(--dark) 100%);
+  color: #fff;
+}
+
+.deco-circle {
+  position: absolute;
+  border-radius: 50%;
+}
+
+/* ---------- Cover ---------- */
+.cover {
+  height: 297mm;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.cover .deco-circle.c1 {
+  width: 300px;
+  height: 300px;
+  top: -90px;
+  right: -80px;
+  background: rgba(255, 255, 255, 0.13);
+}
+
+.cover .deco-circle.c2 {
+  width: 190px;
+  height: 190px;
+  bottom: 40px;
+  left: -70px;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.cover .deco-circle.c3 {
+  width: 96px;
+  height: 96px;
+  top: 128px;
+  left: 54px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.cover-card {
+  position: relative;
+  z-index: 1;
+  background: #fff;
+  border-radius: 30px;
+  margin: 0 46px;
+  padding: 38px 34px 32px 34px;
+  text-align: center;
+  color: var(--ink);
+}
+
+.clinic-badge {
+  width: 78px;
+  height: 78px;
+  margin: 0 auto 18px auto;
+  border-radius: 26px;
+  background: var(--soft);
+  overflow: hidden;
+  text-align: center;
+}
+
+.clinic-badge img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  padding: 11px;
+}
+
+.clinic-badge .fallback-mark {
+  font-size: 27px;
+  font-weight: 800;
+  color: var(--primary);
+  line-height: 76px;
+}
+
+.cover-kicker {
+  display: inline-block;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 3px;
+  color: var(--primary);
+  background: var(--soft);
+  border-radius: 999px;
+  padding: 5px 16px;
+  margin-bottom: 14px;
+}
+
+.cover-title {
+  font-size: 30px;
+  font-weight: 800;
+  letter-spacing: -0.4px;
+  color: var(--dark);
+}
+
+.cover-sub {
+  font-size: 12.5px;
+  font-weight: 300;
+  color: var(--muted);
+  margin-top: 6px;
+}
+
+.cover-name {
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--primary);
+  margin-top: 16px;
+}
+
+.cover-meta {
+  margin-top: 22px;
+  background: var(--soft);
+  border-radius: 20px;
+  padding: 6px 18px;
+  text-align: start;
+  font-size: 12px;
+}
+
+.cover-meta .meta-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 2px;
+}
+
+.cover-meta .meta-row + .meta-row {
+  border-top: 1px solid var(--tint);
+}
+
+.cover-meta .meta-label {
+  color: var(--muted);
+  font-weight: 300;
+}
+
+.cover-meta .meta-value {
+  font-weight: 700;
+  color: var(--dark);
+}
+
+.cover-stats {
+  display: table;
+  table-layout: fixed;
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 8px 0;
+  margin: 12px 0 0 0;
+}
+
+.cover-stats .stat {
+  display: table-cell;
+  width: 33.33%;
+  background: var(--soft);
+  border-radius: 16px;
+  padding: 10px 2px 8px 2px;
+  text-align: center;
+}
+
+.cover-stats .stat-num {
+  font-size: 19px;
+  font-weight: 800;
+  color: var(--primary);
+  line-height: 1.2;
+}
+
+.cover-stats .stat-label {
+  font-size: 9px;
+  font-weight: 300;
+  color: var(--muted);
+}
+
+.cover-signature {
+  margin-top: 18px;
+  font-size: 10px;
+  color: var(--muted);
+}
+
+/* ---------- Content page header ----------
+   A floating white bar rather than a rule — the whole layout is built
+   from rounded white shapes sitting on tinted paper. */
+.page-header {
+  background: #fff;
+  border-radius: 22px;
+  padding: 13px 18px;
+  margin-bottom: 16px;
+}
+
+.day-medallion {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: linear-gradient(150deg, var(--secondary), var(--primary));
+  color: #fff;
+  font-size: 19px;
+  font-weight: 800;
+  line-height: 42px;
+  text-align: center;
+  margin-left: 13px;
+}
+
+.hdr-titles .eyebrow {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 2.5px;
+  color: var(--secondary);
+}
+
+.hdr-titles .title {
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--dark);
+  line-height: 1.35;
+}
+
+.hdr-patient {
+  font-size: 9.5px;
+  font-weight: 300;
+  color: var(--muted);
+}
+
+.hdr-patient strong {
+  display: block;
+  font-size: 11.5px;
+  font-weight: 700;
+  color: var(--dark);
+}
+
+/* ---------- Day page ---------- */
+.motivational-banner {
+  background: #fff;
+  border-radius: 20px;
+  padding: 11px 20px;
+  margin-bottom: 12px;
+  text-align: center;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--dark);
+}
+
+.motivational-banner .heart {
+  color: var(--secondary);
+  margin-left: 7px;
+}
+
+.meal-card {
+  background: #fff;
+  border-radius: 22px;
+  padding: 12px 14px 11px 14px;
+}
+
+.meal-pill {
+  display: inline-block;
+  background: var(--soft);
+  color: var(--dark);
+  border-radius: 999px;
+  padding: 3px 13px;
+  font-size: 9.5px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  margin-bottom: 9px;
+}
+
+.meal-photo {
+  width: 100%;
+  height: 84px;
+  object-fit: cover;
+  border-radius: 16px;
+  margin-bottom: 9px;
+  background: var(--soft);
+}
+
+.meal-name {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--dark);
+  line-height: 1.45;
+  margin-bottom: 7px;
+}
+
+.ingredients {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: 11px;
+  color: #55605c;
+  line-height: 1.75;
+}
+
+.ingredients li {
+  position: relative;
+  padding-right: 13px;
+}
+
+.ingredients li::before {
+  content: "";
+  position: absolute;
+  right: 0;
+  top: 7px;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--tint);
+}
+
+.meal-tip {
+  margin-top: 9px;
+  background: var(--soft);
+  border-radius: 13px;
+  padding: 8px 11px;
+  font-size: 10px;
+  line-height: 1.6;
+  color: var(--dark);
+}
+
+.meal-tip strong {
+  font-weight: 800;
+  color: var(--primary);
+}
+
+/* ---------- Sections ---------- */
+.section {
+  background: #fff;
+  border-radius: 22px;
+  padding: 16px 18px;
+  margin-bottom: 13px;
+}
+
+.section h3 {
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--dark);
+  margin-bottom: 11px;
+}
+
+.section h3 .h-dot {
+  display: inline-block;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--soft);
+  color: var(--primary);
+  font-size: 11px;
+  line-height: 22px;
+  text-align: center;
+  margin-left: 9px;
+  vertical-align: -4px;
+}
+
+.prose {
+  font-size: 12px;
+  color: #55605c;
+  line-height: 1.85;
+}
+
+.prose p:last-child {
+  margin-bottom: 0;
+}
+
+.prose strong {
+  color: var(--dark);
+  font-weight: 700;
+}
+
+.group-label {
+  font-size: 10.5px;
+  font-weight: 700;
+  color: var(--muted);
+  margin: 11px 0 6px 0;
+}
+
+.chip {
+  display: inline-block;
+  border-radius: 999px;
+  padding: 4px 13px;
+  font-size: 11px;
+  font-weight: 600;
+  margin: 0 0 6px 6px;
+  white-space: nowrap;
+}
+
+.chip.allowed {
+  background: var(--soft);
+  color: var(--dark);
+}
+
+.chip.forbidden {
+  background: #fdf0f0;
+  color: #a33a3a;
+}
+
+.simple-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 11px;
+}
+
+.simple-table th {
+  background: var(--soft);
+  color: var(--dark);
+  font-weight: 700;
+  font-size: 10px;
+  text-align: right;
+  padding: 9px 12px;
+}
+
+.simple-table th:first-child {
+  border-radius: 0 12px 12px 0;
+}
+
+.simple-table th:last-child {
+  border-radius: 12px 0 0 12px;
+}
+
+.simple-table td {
+  padding: 10px 12px;
+  text-align: right;
+  border-bottom: 1px solid var(--soft);
+}
+
+.simple-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+/* ---------- Drinks ---------- */
+.drink-card {
+  background: var(--soft);
+  border-radius: 18px;
+  padding: 12px 15px;
+  margin-bottom: 9px;
+  break-inside: avoid;
+}
+
+.drink-card .drink-name {
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--dark);
+  margin-bottom: 5px;
+}
+
+.drink-card .drink-timing {
+  display: inline-block;
+  background: #fff;
+  color: var(--primary);
+  border-radius: 999px;
+  padding: 1px 10px;
+  font-size: 9.5px;
+  font-weight: 700;
+  margin-right: 8px;
+  vertical-align: 1px;
+}
+
+.drink-card .ingredients li::before {
+  background: #fff;
+}
+
+/* ---------- Closing ---------- */
+.closing {
+  height: 297mm;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.closing .deco-circle.c1 {
+  width: 260px;
+  height: 260px;
+  top: -80px;
+  left: -70px;
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.closing .deco-circle.c2 {
+  width: 200px;
+  height: 200px;
+  bottom: -60px;
+  right: -50px;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.closing-card {
+  position: relative;
+  z-index: 1;
+  background: #fff;
+  border-radius: 30px;
+  margin: 0 54px;
+  padding: 44px 34px;
+  text-align: center;
+}
+
+.closing-mark {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: var(--soft);
+  color: var(--primary);
+  font-size: 20px;
+  line-height: 52px;
+  margin: 0 auto 22px auto;
+}
+
+.closing-text {
+  font-size: 23px;
+  font-weight: 800;
+  color: var(--dark);
+  line-height: 1.6;
+}
+
+.closing-sub {
+  margin-top: 12px;
+  font-size: 12px;
+  font-weight: 300;
+  color: var(--muted);
+  line-height: 1.8;
+}
+
+.closing-signature {
+  margin-top: 26px;
+  font-size: 10px;
+  letter-spacing: 1.5px;
+  color: var(--muted);
+}

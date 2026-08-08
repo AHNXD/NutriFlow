@@ -7,6 +7,8 @@ import 'package:share_plus/share_plus.dart';
 
 import '../../providers/plan_providers.dart';
 import '../../services/pdf_export_service.dart';
+import '../../theme/pdf_themes.dart';
+import '../../widgets/pdf_layout_picker.dart';
 import '../../widgets/pdf_theme_picker.dart';
 import 'day_builder_view.dart';
 import 'plan_extras_view.dart';
@@ -24,34 +26,57 @@ class PlanDetailScreen extends ConsumerStatefulWidget {
 class _PlanDetailScreenState extends ConsumerState<PlanDetailScreen> {
   bool _exporting = false;
 
-  Future<void> _pickTheme(String currentTheme) async {
+  /// Design and colour are two independent choices (`pdf_layout` / `theme`),
+  /// so they are picked together in one sheet — the layout miniatures are
+  /// drawn in the selected palette, which only makes sense side by side.
+  Future<void> _pickPdfStyle(String currentLayout, String currentTheme) async {
     final notifier = ref.read(planDetailProvider(widget.planId).notifier);
-    var selected = currentTheme;
-    await showDialog<void>(
+    var layout = currentLayout;
+    var theme = currentTheme;
+
+    final saved = await showDialog<bool>(
       context: context,
       builder: (context) => StatefulBuilder(
         builder: (context, setDialogState) => AlertDialog(
-          title: const Text('لون قالب PDF'),
+          title: const Text('شكل ملف PDF'),
           content: SizedBox(
-            width: 320,
-            child: PdfThemePicker(
-              selected: selected,
-              onChanged: (id) => setDialogState(() => selected = id),
+            width: 460,
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  PdfLayoutPicker(
+                    selected: layout,
+                    theme: PdfThemes.byId(theme),
+                    onChanged: (id) => setDialogState(() => layout = id),
+                  ),
+                  const SizedBox(height: 20),
+                  PdfThemePicker(
+                    selected: theme,
+                    onChanged: (id) => setDialogState(() => theme = id),
+                  ),
+                ],
+              ),
             ),
           ),
           actions: [
-            TextButton(onPressed: () => Navigator.pop(context), child: const Text('إلغاء')),
+            TextButton(
+              onPressed: () => Navigator.pop(context, false),
+              child: const Text('إلغاء'),
+            ),
             FilledButton(
-              onPressed: () {
-                notifier.updateTheme(selected);
-                Navigator.pop(context);
-              },
+              onPressed: () => Navigator.pop(context, true),
               child: const Text('حفظ'),
             ),
           ],
         ),
       ),
     );
+
+    if (saved != true) return;
+    if (layout != currentLayout) await notifier.updatePdfLayout(layout);
+    if (theme != currentTheme) await notifier.updateTheme(theme);
   }
 
   Future<void> _exportPdf() async {
@@ -111,8 +136,9 @@ class _PlanDetailScreenState extends ConsumerState<PlanDetailScreen> {
               title: Text(state.plan.patientName),
               actions: [
                 IconButton(
-                  tooltip: 'لون قالب PDF',
-                  onPressed: () => _pickTheme(state.plan.theme),
+                  tooltip: 'شكل ملف PDF',
+                  onPressed: () =>
+                      _pickPdfStyle(state.plan.pdfLayout, state.plan.theme),
                   icon: const Icon(Icons.palette_outlined),
                 ),
                 IconButton(

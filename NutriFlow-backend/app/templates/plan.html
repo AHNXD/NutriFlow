@@ -1,8 +1,9 @@
 {% extends "base.html" %}
 {% block content %}
-  {% include "cover_page.html" %}
+  {% set design = "layouts/" ~ layout.id %}
+  {% include design ~ "/cover.html" %}
   {% for day in days %}
-    {% include "day_page.html" %}
+    {% include design ~ "/day.html" %}
   {% endfor %}
-  {% include "notes_page.html" %}
+  {% include design ~ "/notes.html" %}
 {% endblock %}

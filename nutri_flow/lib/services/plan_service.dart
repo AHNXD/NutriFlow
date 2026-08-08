@@ -52,6 +52,18 @@ class PlanService {
     return Plan.fromMap(row);
   }
 
+  /// Colour and design are stored separately (`theme` / `pdf_layout`) and can
+  /// be changed independently, so they get an update each.
+  Future<Plan> updatePdfLayout(String planId, String layout) async {
+    final row = await _client
+        .from('plans')
+        .update({'pdf_layout': layout})
+        .eq('id', planId)
+        .select()
+        .single();
+    return Plan.fromMap(row);
+  }
+
   Future<List<PlanDay>> fetchPlanDays(String planId) async {
     final rows = await _client
         .from('plan_days')

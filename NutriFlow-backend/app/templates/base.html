@@ -3,17 +3,19 @@
 <head>
   <meta charset="utf-8" />
   <title>{{ plan.patient_name }} — NutriFlow</title>
-  <style>{% include "styles.css" %}</style>
+  <style>{% include "shared.css" %}</style>
+  <style>{% include "layouts/" ~ layout.id ~ "/styles.css" %}</style>
   <style>
     :root {
       --primary: {{ theme.primary }};
       --secondary: {{ theme.secondary }};
       --dark: {{ theme.dark }};
       --soft: {{ theme.soft }};
+      --tint: {{ theme.tint }};
     }
   </style>
 </head>
-<body>
+<body class="layout-{{ layout.id }}">
   {% block content %}{% endblock %}
 </body>
 </html>

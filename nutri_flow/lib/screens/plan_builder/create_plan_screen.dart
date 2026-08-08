@@ -5,6 +5,8 @@ import 'package:uuid/uuid.dart';
 import '../../models/plan.dart';
 import '../../providers/dietitian_profile_providers.dart';
 import '../../providers/plan_providers.dart';
+import '../../theme/pdf_themes.dart';
+import '../../widgets/pdf_layout_picker.dart';
 import '../../widgets/pdf_theme_picker.dart';
 
 class CreatePlanScreen extends ConsumerStatefulWidget {
@@ -23,6 +25,7 @@ class _CreatePlanScreenState extends ConsumerState<CreatePlanScreen> {
   final _fastingNotesCtrl = TextEditingController();
   final _generalNotesCtrl = TextEditingController();
   String _theme = 'emerald';
+  String _pdfLayout = 'aurora';
   bool _saving = false;
   bool _dietitianPrefilled = false;
 
@@ -56,6 +59,7 @@ class _CreatePlanScreenState extends ConsumerState<CreatePlanScreen> {
             ? null
             : _generalNotesCtrl.text.trim(),
         theme: _theme,
+        pdfLayout: _pdfLayout,
       );
       final created = await ref.read(planListProvider.notifier).create(plan);
       if (mounted) Navigator.pop(context, created);
@@ -132,6 +136,12 @@ class _CreatePlanScreenState extends ConsumerState<CreatePlanScreen> {
             PdfThemePicker(
               selected: _theme,
               onChanged: (id) => setState(() => _theme = id),
+            ),
+            const SizedBox(height: 20),
+            PdfLayoutPicker(
+              selected: _pdfLayout,
+              theme: PdfThemes.byId(_theme),
+              onChanged: (id) => setState(() => _pdfLayout = id),
             ),
             const SizedBox(height: 24),
             FilledButton(

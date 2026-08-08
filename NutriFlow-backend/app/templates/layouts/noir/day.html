@@ -1,0 +1,54 @@
+<div class="page numbered">
+  <div class="page-header">
+    <div class="hdr-row">
+      <div class="hdr-mark">
+        <div class="day-medallion">{{ day.day_number }}</div>
+      </div>
+      <div class="hdr-titles">
+        <div class="eyebrow">NUTRIFLOW</div>
+        <div class="title">اليوم {{ day.day_number }}</div>
+      </div>
+      <div class="hdr-patient">
+        الخطة الغذائية
+        <strong>{{ plan.patient_name }}</strong>
+      </div>
+    </div>
+  </div>
+
+  {% if day.motivational_text %}
+  <div class="motivational-banner">{{ day.motivational_text }}</div>
+  {% endif %}
+
+  {% if day.meal_views %}
+  <div class="meals-grid">
+    {% for row in day.meal_views|batch(2) %}
+    <div class="meal-row{% if day.meal_views|length == 1 %} single{% endif %}">
+      {% for meal in row %}
+      <div class="meal-card">
+        <div class="meal-type">{{ meal.label }}</div>
+        {% if meal.image_url %}
+        <img class="meal-photo" src="{{ meal.image_url }}" />
+        {% endif %}
+        <div class="meal-name">{{ meal.name }}</div>
+        {% if meal.ingredients %}
+        <ul class="ingredients">
+          {% for line in meal.ingredients %}
+          <li>{{ line }}</li>
+          {% endfor %}
+        </ul>
+        {% endif %}
+        {% if meal.tip %}
+        <div class="meal-tip"><strong>نصيحة</strong> — {{ meal.tip }}</div>
+        {% endif %}
+      </div>
+      {% endfor %}
+      {% if row|length == 1 and day.meal_views|length > 1 %}
+      <div class="meal-spacer"></div>
+      {% endif %}
+    </div>
+    {% endfor %}
+  </div>
+  {% else %}
+  <p class="no-content">لم تُضَف وجبات لهذا اليوم بعد.</p>
+  {% endif %}
+</div>

@@ -1,0 +1,56 @@
+<div class="page cover brand-gradient">
+  <div class="deco-circle c1"></div>
+  <div class="deco-circle c2"></div>
+  <div class="deco-circle c3"></div>
+
+  <div class="cover-card">
+    <div class="clinic-badge">
+      {% if dietitian.logo_url %}
+      <img src="{{ dietitian.logo_url }}" />
+      {% else %}
+      <span class="fallback-mark">{{ (dietitian.name or "NF")[:2] }}</span>
+      {% endif %}
+    </div>
+
+    <div class="cover-kicker">NUTRIFLOW</div>
+    <div class="cover-title">الخطة الغذائية</div>
+    <div class="cover-sub">مُعدّة خصيصًا لكِ بكل عناية</div>
+    <div class="cover-name">{{ plan.patient_name }}</div>
+
+    <div class="cover-meta">
+      <div class="meta-row">
+        <span class="meta-label">الأخصائية</span>
+        <span class="meta-value">{{ plan.dietitian_name }}</span>
+      </div>
+      <div class="meta-row">
+        <span class="meta-label">مدة الخطة</span>
+        <span class="meta-value">{{ plan.duration_days }} أيام</span>
+      </div>
+      {% if plan.fasting_hours %}
+      <div class="meta-row">
+        <span class="meta-label">الصيام المتقطع</span>
+        <span class="meta-value">{{ plan.fasting_hours }} ساعة</span>
+      </div>
+      {% endif %}
+    </div>
+
+    <div class="cover-stats">
+      <div class="stat">
+        <div class="stat-num">{{ stats.days }}</div>
+        <div class="stat-label">أيام</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">{{ stats.meals }}</div>
+        <div class="stat-label">وجبة</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">{{ stats.supplements }}</div>
+        <div class="stat-label">مكمّل</div>
+      </div>
+    </div>
+
+    {% if dietitian.name %}
+    <div class="cover-signature">{{ dietitian.name }}</div>
+    {% endif %}
+  </div>
+</div>

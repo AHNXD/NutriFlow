@@ -1,0 +1,222 @@
+/* Foundations shared by every PDF layout — font, page geometry, reset and
+   the couple of layout mechanics that are load-bearing for WeasyPrint.
+   Everything *visual* (color, type scale, card shape) belongs to the
+   per-layout stylesheet in templates/layouts/<id>/styles.css.
+
+   Colors: --primary/--secondary/--dark/--soft/--tint come from the plan's
+   theme and are injected by base.html. Nothing anywhere may hardcode a
+   brand color — a layout must render correctly in all eight palettes. */
+
+@font-face {
+  font-family: "Cairo";
+  src: url("../fonts/Cairo-Variable.ttf");
+  font-weight: 200 1000;
+}
+
+:root {
+  --ink: #17211e;
+  --muted: #6b7280;
+  --faint: #9ca3af;
+  --border: #e6e9ec;
+  --paper: #ffffff;
+}
+
+/* Two page types. The default is full-bleed — covers and closing pages
+   paint edge to edge. Content pages opt into `page: content` (via
+   .page.numbered) to reserve a bottom strip for the page-number margin
+   box; a margin box rather than an in-flow footer keeps the number
+   correct when one day's meals overflow onto a second sheet.
+
+   PAGE HEIGHTS ARE WRITTEN IN mm ON PURPOSE — do not "simplify" them
+   back to `html, body { height: 100% }` + `.page { min-height: 100% }`.
+   A percentage height resolves against the full 297mm sheet even on a
+   page whose usable area is 11mm shorter, so every content page
+   overflowed its own page box by exactly the page-number strip. Mostly
+   that overflow was empty space and went unnoticed — but as soon as a
+   day's meals also ended near the bottom edge, WeasyPrint dropped the
+   entire rest of the document (an 8-page plan silently exported as 2).
+   Stating both heights explicitly keeps the box and its page in sync;
+   @page size is fixed to A4, so the numbers cannot drift. */
+@page {
+  size: A4;
+  margin: 0;
+}
+
+@page content {
+  margin: 0 0 11mm 0;
+
+  @bottom-center {
+    content: counter(page);
+    font-family: "Cairo", sans-serif;
+    font-size: 8.5px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    color: #9ca3af;
+    margin-top: -4mm;
+  }
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: auto;
+}
+
+body {
+  font-family: "Cairo", sans-serif;
+  color: var(--ink);
+  background: var(--paper);
+  margin: 0;
+  font-size: 12.5px;
+  line-height: 1.65;
+}
+
+p {
+  margin: 0 0 8px 0;
+}
+
+h1,
+h2,
+h3 {
+  margin: 0 0 8px 0;
+  font-weight: 700;
+  line-height: 1.35;
+}
+
+.page {
+  page-break-after: always;
+  position: relative;
+  min-height: 297mm; /* the full A4 sheet — see the @page note above */
+}
+
+.page:last-child {
+  page-break-after: auto;
+}
+
+.page.numbered {
+  page: content;
+  min-height: 286mm; /* 297mm sheet − 11mm page-number strip */
+}
+
+/* ============================================================
+   WeasyPrint 66 constraints every layout has to respect. All of these
+   fail *silently* — the declaration is dropped and the page still
+   renders, just wrong — so they are easy to reintroduce by accident.
+   Verified against weasyprint.css.properties.INITIAL_VALUES.
+
+   NOT SUPPORTED — do not use:
+     · Logical box properties. padding/margin/border-inline-start|end,
+       inset-inline-start|end, inline-size, block-size are all dropped.
+       This document is always dir="rtl", so write physical properties:
+       inline-start = right, inline-end = left.
+     · box-shadow and text-shadow. Depth has to come from borders,
+       tints and gradients instead.
+     · filter, clip-path, mix-blend-mode, writing-mode, aspect-ratio.
+     · Flex `gap`. Parsed, then ignored in practice — flex children end
+       up touching or overlapping. Use margins on the children.
+     · The `transparent` keyword *inside a gradient*: one such stop makes
+       the entire gradient render as nothing. Name the underlying color
+       explicitly (var(--paper), var(--primary), …) instead.
+     · `background-size` on a gradient — ignored, so the gradient floods
+       its whole box. To draw a band, put a hard stop in the gradient
+       itself: linear-gradient(to left, C 0px, C 14px, var(--paper) 14px).
+     · Stretching an absolutely positioned box with opposing offsets
+       (`top` + `bottom`, `left` + `right`) or a percentage height — it
+       keeps its content size. Full-height decoration must be a border,
+       a background, or a box with a fixed pixel height.
+
+   SUPPORTED and worth using: gradients (linear + radial), transform,
+   opacity, border-radius, object-fit, background-size, column-count,
+   counters and @page margin boxes, tables, floats, z-index.
+
+   Multi-row flex/grid containers also paginate unreliably (cards
+   mis-sized; in one case the document stopped paginating past the first
+   day). Tables and floats break across pages correctly.
+   ============================================================
+
+   Hence the meal grid is a stack of two-cell tables — one `.meal-row` per
+   pair of meals, batched in the template. Table cells also give the two
+   cards in a row a shared height for free, which floats cannot do, and
+   batching keeps reading order strictly right-to-left, top-to-bottom
+   (free-floating cards reflow into a jumbled masonry when heights
+   differ). The negative margins on the wrapper cancel `border-spacing`'s
+   outer edge so cards still line up with the page margin. */
+.meals-grid {
+  margin-right: -8px;
+  margin-left: -8px;
+}
+
+.meal-row {
+  display: table;
+  table-layout: fixed;
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 8px 0;
+  margin-bottom: 14px;
+  break-inside: avoid;
+}
+
+.meal-row .meal-card {
+  display: table-cell;
+  width: 50%;
+  vertical-align: top;
+}
+
+/* Odd meal count: the last row holds one card, which should not stretch
+   across the full width — an empty cell keeps it in its column. */
+.meal-row .meal-spacer {
+  display: table-cell;
+  width: 50%;
+}
+
+/* A day with a single meal renders it full width instead. */
+.meal-row.single .meal-card {
+  display: block;
+  width: 100%;
+}
+
+/* Page-header scaffold: mark | titles | patient, on one row.
+   A table again, for the same reason as the meal grid — a three-child flex
+   row was sized from max-content and overflowed the page, and a float +
+   `overflow:hidden` sibling was placed *below* the float rather than
+   beside it (WeasyPrint doesn't implement that part of BFC layout).
+   `width: 1px` + `nowrap` is the standard shrink-to-content table cell. */
+.hdr-row {
+  display: table;
+  width: 100%;
+  table-layout: auto;
+}
+
+.hdr-mark,
+.hdr-titles,
+.hdr-patient {
+  display: table-cell;
+  vertical-align: middle;
+}
+
+.hdr-mark {
+  width: 1px;
+  white-space: nowrap;
+}
+
+.hdr-patient {
+  text-align: end;
+}
+
+/* RTL decorations (chip dots, section bullets) must be positioned
+   absolutely with `right`, never left as in-flow ::before boxes. An empty
+   inline-block is bidi-neutral and WeasyPrint resolves it to the *end* of
+   an RTL line, so the dot lands on the wrong side of the word.
+   `position:absolute; right:` sidesteps the bidi algorithm entirely. */
+
+img {
+  max-width: 100%;
+}
+
+.no-content {
+  color: var(--muted);
+  font-size: 12px;
+}

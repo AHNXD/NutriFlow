@@ -1,13 +1,12 @@
 """Fetches one plan's full data graph from Supabase and shapes it into the
-plain dict structure the Jinja2 templates render (see templates/day_page.html
-etc.). Mirrors supabase/schema.sql's tables — see that file for the source
-of truth on columns.
+plain dict structure the Jinja2 templates render (see
+templates/layouts/<design>/day.html etc.). Mirrors supabase/schema.sql's
+tables — see that file for the source of truth on columns.
 """
 
 from __future__ import annotations
 
 from . import supabase_rest as db
-from .themes import get_theme
 
 
 class PlanNotFoundError(Exception):
@@ -72,9 +71,11 @@ async def get_plan_pdf_context(plan_id: str) -> dict:
     except db.SupabaseRestError:
         profile = {}
 
+    # `plans.theme` (palette) and `plans.pdf_layout` (design) ride along in
+    # the plan row; pdf_renderer resolves both into the objects the
+    # templates use, so this layer stays a pure data fetch.
     return {
         "plan": plan,
-        "theme": get_theme(plan.get("theme")),
         "dietitian": profile,
         "days": days,
         "drinks": drinks,

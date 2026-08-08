@@ -6,7 +6,12 @@ class Plan {
   final int? fastingHours;
   final String? fastingNotes;
   final String? generalNotes;
+  /// PDF colour palette id — see `lib/theme/pdf_themes.dart`.
   final String theme;
+
+  /// PDF design template id — see `lib/theme/pdf_layouts.dart`. Independent
+  /// of [theme]: any design renders in any palette.
+  final String pdfLayout;
   final DateTime? createdAt;
 
   const Plan({
@@ -18,6 +23,7 @@ class Plan {
     this.fastingNotes,
     this.generalNotes,
     this.theme = 'emerald',
+    this.pdfLayout = 'aurora',
     this.createdAt,
   });
 
@@ -30,6 +36,7 @@ class Plan {
         fastingNotes: map['fasting_notes'] as String?,
         generalNotes: map['general_notes'] as String?,
         theme: map['theme'] as String? ?? 'emerald',
+        pdfLayout: map['pdf_layout'] as String? ?? 'aurora',
         createdAt: map['created_at'] != null
             ? DateTime.tryParse(map['created_at'] as String)
             : null,
@@ -43,5 +50,6 @@ class Plan {
         'fasting_notes': fastingNotes,
         'general_notes': generalNotes,
         'theme': theme,
+        'pdf_layout': pdfLayout,
       };
 }

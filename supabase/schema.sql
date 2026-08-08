@@ -113,6 +113,10 @@ create table if not exists plans (
   -- لون قالب PDF لهذه الخطة — القيم المتاحة معرّفة في NutriFlow-backend/app/themes.py
   -- ولوحة الألوان في nutri_flow/lib/theme/pdf_themes.dart (يجب أن يبقيا متطابقين).
   theme text not null default 'emerald',
+  -- تصميم قالب PDF (شكل الصفحات) — مستقل تمامًا عن اللون أعلاه، أي تصميم
+  -- يعمل مع أي لون. القيم معرّفة في NutriFlow-backend/app/layouts.py
+  -- وفي nutri_flow/lib/theme/pdf_layouts.dart (يجب أن يبقيا متطابقين).
+  pdf_layout text not null default 'aurora',
   created_at timestamptz default now(),
   updated_at timestamptz default now()
 );
@@ -124,6 +128,7 @@ create trigger trg_plans_updated_at before update on plans
 -- new database — an already-deployed `plans` table needs the column added
 -- explicitly.
 alter table plans add column if not exists theme text not null default 'emerald';
+alter table plans add column if not exists pdf_layout text not null default 'aurora';
 
 create table if not exists plan_days (
   id uuid primary key default gen_random_uuid(),

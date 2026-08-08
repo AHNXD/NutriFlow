@@ -1,0 +1,41 @@
+<div class="page cover">
+  <div class="clinic-badge">
+    {% if dietitian.logo_url %}
+    <img src="{{ dietitian.logo_url }}" />
+    {% else %}
+    <span class="fallback-mark">{{ (dietitian.name or "NF")[:2] }}</span>
+    {% endif %}
+  </div>
+
+  <div class="cover-kicker">NUTRIFLOW</div>
+  <div class="cover-title">الخطة الغذائية</div>
+  <div class="cover-rule"></div>
+
+  <div class="cover-name">{{ plan.patient_name }}</div>
+  <div class="cover-role">مُعدّة خصيصًا لكِ</div>
+
+  <div class="cover-meta">
+    <div class="meta-row">
+      <span class="meta-label">الأخصائية</span>
+      <span class="meta-value">{{ plan.dietitian_name }}</span>
+    </div>
+    <div class="meta-row">
+      <span class="meta-label">مدة الخطة</span>
+      <span class="meta-value">{{ plan.duration_days }} أيام</span>
+    </div>
+    <div class="meta-row">
+      <span class="meta-label">عدد الوجبات</span>
+      <span class="meta-value">{{ stats.meals }} وجبة</span>
+    </div>
+    {% if plan.fasting_hours %}
+    <div class="meta-row">
+      <span class="meta-label">الصيام المتقطع</span>
+      <span class="meta-value">{{ plan.fasting_hours }} ساعة</span>
+    </div>
+    {% endif %}
+  </div>
+
+  {% if dietitian.name %}
+  <div class="cover-signature">{{ dietitian.name }}</div>
+  {% endif %}
+</div>

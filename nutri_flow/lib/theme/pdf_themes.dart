@@ -69,7 +69,21 @@ class PdfThemes {
     secondary: Color(0xFFFBBF24),
   );
 
-  static const all = [emerald, ocean, sunset, orchid, rose, gold];
+  static const sand = PdfTheme(
+    id: 'sand',
+    labelAr: 'رملي',
+    primary: Color(0xFFC2643F),
+    secondary: Color(0xFFE4A57D),
+  );
+
+  static const charcoal = PdfTheme(
+    id: 'charcoal',
+    labelAr: 'فحمي',
+    primary: Color(0xFF3F4A5A),
+    secondary: Color(0xFF7A889B),
+  );
+
+  static const all = [emerald, ocean, sunset, orchid, rose, gold, sand, charcoal];
 
   static PdfTheme byId(String id) =>
       all.firstWhere((t) => t.id == id, orElse: () => emerald);

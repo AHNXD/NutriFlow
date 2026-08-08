@@ -1,0 +1,50 @@
+<div class="page cover">
+  <div class="cover-inner">
+    <div class="cover-logo">
+      {% if dietitian.logo_url %}
+      <img src="{{ dietitian.logo_url }}" />
+      {% else %}
+      <span class="fallback-mark">{{ (dietitian.name or "NF")[:2] }}</span>
+      {% endif %}
+    </div>
+
+    <div class="cover-kicker">NUTRIFLOW · NUTRITION PLAN</div>
+
+    <div class="cover-display">
+      <div class="line-1">برنامج غذائي مُصمَّم بعناية</div>
+      <div class="line-2">الخطة</div>
+      <div class="line-3">الغذائية</div>
+      <div class="rule"></div>
+      <div class="cover-for">
+        أُعدّت خصيصًا لـ
+        <strong>{{ plan.patient_name }}</strong>
+      </div>
+    </div>
+
+    <div class="cover-bottom">
+      <div class="cover-figure">
+        <div class="fig-num">{{ plan.duration_days }}</div>
+        <div class="fig-label">DAYS</div>
+      </div>
+
+      <div class="cover-meta">
+        <div class="meta-cell">
+          <div class="meta-label">الأخصائية</div>
+          <div class="meta-value">{{ plan.dietitian_name }}</div>
+        </div>
+        <div class="meta-cell">
+          <div class="meta-label">المدة</div>
+          <div class="meta-value">{{ plan.duration_days }} أيام</div>
+        </div>
+        <div class="meta-cell">
+          <div class="meta-label">الوجبات</div>
+          <div class="meta-value">{{ stats.meals }} وجبة</div>
+        </div>
+        <div class="meta-cell">
+          <div class="meta-label">الصيام</div>
+          <div class="meta-value">{% if plan.fasting_hours %}{{ plan.fasting_hours }} ساعة{% else %}—{% endif %}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

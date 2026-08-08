@@ -1,0 +1,415 @@
+/* ============================================================
+   MINIMAL — quiet and airy. Light type weights, hairline rules, no
+   fills beyond the faintest tint, colour used only in small marks.
+   The most printer-friendly of the five.
+
+   Physical properties only; no box-shadow, no flex gap, no logical
+   properties, no `transparent` inside gradients — see shared.css.
+   ============================================================ */
+
+body {
+  font-size: 12px;
+  line-height: 1.8;
+  color: #2b3230;
+}
+
+.page {
+  padding: 46px 52px 34px 52px;
+}
+
+/* ---------- Cover ---------- */
+.cover {
+  height: 297mm;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
+  padding: 0 78px;
+}
+
+.clinic-badge {
+  width: 62px;
+  height: 62px;
+  margin: 0 auto 30px auto;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  overflow: hidden;
+  text-align: center;
+}
+
+.clinic-badge img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  padding: 9px;
+}
+
+.clinic-badge .fallback-mark {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--primary);
+  line-height: 60px;
+}
+
+.cover-kicker {
+  font-size: 8.5px;
+  font-weight: 700;
+  letter-spacing: 5px;
+  color: var(--primary);
+  margin-bottom: 20px;
+}
+
+.cover-title {
+  font-size: 34px;
+  font-weight: 200;
+  letter-spacing: 1px;
+  line-height: 1.4;
+}
+
+.cover-rule {
+  width: 34px;
+  height: 1px;
+  background: var(--primary);
+  margin: 26px auto;
+}
+
+.cover-name {
+  font-size: 19px;
+  font-weight: 700;
+  letter-spacing: -0.2px;
+}
+
+.cover-role {
+  font-size: 10px;
+  font-weight: 300;
+  color: var(--muted);
+  margin-top: 5px;
+}
+
+.cover-meta {
+  display: table;
+  width: 300px;
+  margin: 44px auto 0 auto;
+  font-size: 11.5px;
+}
+
+.cover-meta .meta-row {
+  display: table-row;
+}
+
+.cover-meta .meta-label,
+.cover-meta .meta-value {
+  display: table-cell;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.cover-meta .meta-label {
+  color: var(--muted);
+  font-weight: 300;
+  text-align: right;
+}
+
+.cover-meta .meta-value {
+  font-weight: 600;
+  text-align: left;
+}
+
+.cover-signature {
+  margin-top: 40px;
+  font-size: 9px;
+  font-weight: 400;
+  color: var(--muted);
+}
+
+/* ---------- Content page header ---------- */
+.page-header {
+  padding-bottom: 13px;
+  margin-bottom: 24px;
+  border-bottom: 1px solid var(--border);
+}
+
+.day-medallion {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: 1px solid var(--primary);
+  color: var(--primary);
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 32px;
+  text-align: center;
+  margin-left: 14px;
+}
+
+.hdr-titles .eyebrow {
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 4px;
+  color: var(--primary);
+}
+
+.hdr-titles .title {
+  font-size: 20px;
+  font-weight: 300;
+  letter-spacing: 0.3px;
+  line-height: 1.4;
+}
+
+.hdr-patient {
+  font-size: 9.5px;
+  font-weight: 300;
+  color: var(--muted);
+}
+
+.hdr-patient strong {
+  display: block;
+  font-size: 11px;
+  font-weight: 600;
+  color: #2b3230;
+}
+
+/* ---------- Day page ---------- */
+.motivational-banner {
+  text-align: center;
+  font-size: 13px;
+  font-weight: 300;
+  font-style: italic;
+  color: var(--dark);
+  margin-bottom: 22px;
+  padding: 0 40px;
+  line-height: 1.75;
+}
+
+.meal-row {
+  margin-bottom: 18px;
+}
+
+.meal-card {
+  padding: 0 12px;
+}
+
+.meal-rule {
+  height: 2px;
+  width: 22px;
+  background: var(--primary);
+  margin-bottom: 11px;
+}
+
+.meal-type {
+  font-size: 8px;
+  font-weight: 700;
+  color: var(--muted);
+  margin-bottom: 5px;
+}
+
+.meal-photo {
+  width: 100%;
+  height: 82px;
+  object-fit: cover;
+  border-radius: 3px;
+  margin-bottom: 9px;
+  background: var(--soft);
+}
+
+.meal-name {
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.5;
+  margin-bottom: 7px;
+}
+
+.ingredients {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: 11px;
+  font-weight: 300;
+  color: #5b6360;
+  line-height: 1.7;
+}
+
+.ingredients li {
+  border-bottom: 1px solid #f4f6f5;
+  padding: 1px 0;
+}
+
+.ingredients li:last-child {
+  border-bottom: none;
+}
+
+.meal-tip {
+  margin-top: 9px;
+  font-size: 10px;
+  font-weight: 300;
+  line-height: 1.7;
+  color: var(--muted);
+}
+
+.meal-tip strong {
+  font-weight: 700;
+  color: var(--primary);
+  letter-spacing: 1px;
+}
+
+/* ---------- Sections ---------- */
+.section {
+  margin-bottom: 30px;
+}
+
+.section h3 {
+  font-size: 9px;
+  font-weight: 700;
+  color: var(--primary);
+  margin-bottom: 14px;
+}
+
+.prose {
+  font-size: 12px;
+  font-weight: 300;
+  line-height: 1.95;
+  color: #4a524f;
+  max-width: 84%;
+}
+
+.prose strong {
+  font-weight: 600;
+  color: #2b3230;
+}
+
+.group-label {
+  font-size: 10.5px;
+  font-weight: 600;
+  color: #2b3230;
+  margin: 16px 0 4px 0;
+}
+
+.chip-list {
+  column-count: 3;
+  column-gap: 24px;
+}
+
+.chip {
+  position: relative;
+  display: block;
+  font-size: 10.5px;
+  font-weight: 300;
+  color: #5b6360;
+  padding: 2px 13px 2px 0;
+  break-inside: avoid;
+}
+
+.chip::before {
+  content: "";
+  position: absolute;
+  right: 0;
+  top: 9px;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--primary);
+}
+
+.chip.forbidden {
+  color: #9ca3af;
+}
+
+.chip.forbidden::before {
+  background: #d1d5db;
+}
+
+.simple-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 11px;
+  font-weight: 300;
+}
+
+.simple-table th {
+  font-size: 8px;
+  font-weight: 700;
+  color: var(--muted);
+  text-align: right;
+  padding: 0 8px 9px 8px;
+  border-bottom: 1px solid var(--border);
+}
+
+.simple-table td {
+  padding: 11px 8px;
+  text-align: right;
+  border-bottom: 1px solid #f4f6f5;
+}
+
+.simple-table td:first-child {
+  font-weight: 600;
+}
+
+/* ---------- Drinks ---------- */
+.drink-card {
+  margin-bottom: 18px;
+  break-inside: avoid;
+}
+
+.drink-card .drink-name {
+  font-size: 12.5px;
+  font-weight: 600;
+  margin-bottom: 2px;
+}
+
+.drink-card .drink-timing {
+  font-size: 8px;
+  font-weight: 700;
+  color: var(--primary);
+  margin-right: 9px;
+}
+
+.drink-card .ingredients {
+  font-size: 10.5px;
+}
+
+.drink-card .ingredients li {
+  border-bottom: none;
+}
+
+/* ---------- Closing ---------- */
+.closing {
+  height: 297mm;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
+  padding: 0 90px;
+}
+
+.closing-mark {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--primary);
+  margin: 0 auto 32px auto;
+}
+
+.closing-text {
+  font-size: 26px;
+  font-weight: 200;
+  line-height: 1.7;
+  letter-spacing: 0.5px;
+}
+
+.closing-text strong {
+  font-weight: 600;
+}
+
+.closing-sub {
+  margin-top: 22px;
+  font-size: 11.5px;
+  font-weight: 300;
+  color: var(--muted);
+  line-height: 1.9;
+}
+
+.closing-signature {
+  margin-top: 46px;
+  font-size: 9px;
+  color: var(--muted);
+}

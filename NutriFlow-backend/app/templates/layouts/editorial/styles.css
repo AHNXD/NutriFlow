@@ -1,0 +1,515 @@
+/* ============================================================
+   EDITORIAL — magazine typography. White paper, one accent color,
+   hairline rules, oversized display numerals, meals as a single-column
+   feature list rather than a card grid.
+
+   Physical properties only, no box-shadow, no flex gap — see shared.css.
+   ============================================================ */
+
+body {
+  font-size: 12px;
+}
+
+.page {
+  padding: 38px 42px 30px 42px;
+}
+
+/* A slim accent bar down the binding edge of every page, drawn as a
+   border. Borders paint the element's full box height, which is the only
+   reliable way to get a full-page rule here — every background-based
+   attempt failed: `background-size` is ignored on gradients (the gradient
+   floods the box), a gradient stop written with the `transparent` keyword
+   renders nothing at all, and a var() colour combined with a hard stop
+   position drops the declaration outright. Absolutely positioned strips
+   are out too: with `top` + `bottom` or `height: 100%` they never
+   stretch, they keep their content height. */
+.page {
+  border-right: 5mm solid var(--primary);
+}
+
+/* ---------- Cover ---------- */
+.cover {
+  padding: 0;
+  height: 297mm;
+  border-right-width: 8mm;
+}
+
+/* Flex column with the three blocks pushed apart, instead of absolutely
+   positioning the bottom block — see the note above on stretching. */
+.cover-inner {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 297mm;
+  padding: 44px 56px 44px 46px;
+}
+
+.cover-kicker {
+  font-size: 9.5px;
+  font-weight: 700;
+  letter-spacing: 4px;
+  color: var(--primary);
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--ink);
+  margin-bottom: 0;
+}
+
+.cover-logo {
+  position: absolute;
+  top: 40px;
+  left: 46px;
+  width: 58px;
+  height: 58px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  overflow: hidden;
+  text-align: center;
+}
+
+.cover-logo img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  padding: 7px;
+}
+
+.cover-logo .fallback-mark {
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--primary);
+  line-height: 56px;
+}
+
+.cover-display {
+  margin-top: 92px;
+}
+
+.cover-display .line-1 {
+  font-size: 15px;
+  font-weight: 300;
+  letter-spacing: 1px;
+  color: var(--muted);
+  margin-bottom: 10px;
+}
+
+.cover-display .line-2 {
+  font-size: 52px;
+  font-weight: 900;
+  line-height: 1.15;
+  letter-spacing: -1.5px;
+}
+
+.cover-display .line-3 {
+  font-size: 52px;
+  font-weight: 200;
+  line-height: 1.15;
+  letter-spacing: -1.5px;
+  color: var(--primary);
+}
+
+.cover-display .rule {
+  width: 120px;
+  height: 5px;
+  background: var(--ink);
+  margin-top: 26px;
+}
+
+.cover-for {
+  margin-top: 30px;
+  font-size: 13px;
+  font-weight: 300;
+  color: var(--muted);
+}
+
+.cover-for strong {
+  display: block;
+  font-size: 26px;
+  font-weight: 800;
+  color: var(--ink);
+  letter-spacing: -0.5px;
+  margin-top: 3px;
+}
+
+/* Oversized duration numeral, set in the tint so it reads as texture. */
+.cover-figure {
+  text-align: left;
+  line-height: 1;
+  margin-bottom: 10px;
+}
+
+.cover-figure .fig-num {
+  font-size: 132px;
+  font-weight: 900;
+  color: var(--tint);
+  letter-spacing: -6px;
+}
+
+.cover-figure .fig-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 3px;
+  color: var(--primary);
+  margin-top: -6px;
+}
+
+.cover-meta {
+  display: table;
+  width: 100%;
+  table-layout: fixed;
+  border-top: 1px solid var(--ink);
+  padding-top: 14px;
+}
+
+.cover-meta .meta-cell {
+  display: table-cell;
+  vertical-align: top;
+  padding-left: 14px;
+}
+
+.cover-meta .meta-label {
+  font-size: 8.5px;
+  font-weight: 700;
+  color: var(--muted);
+  margin-bottom: 3px;
+}
+
+.cover-meta .meta-value {
+  font-size: 13px;
+  font-weight: 700;
+}
+
+/* ---------- Content page header ---------- */
+.page-header {
+  position: relative;
+  z-index: 1;
+  border-bottom: 3px solid var(--ink);
+  padding-bottom: 10px;
+  margin-bottom: 26px;
+}
+
+.hdr-titles .eyebrow {
+  font-size: 8.5px;
+  font-weight: 700;
+  letter-spacing: 3.5px;
+  color: var(--primary);
+}
+
+.hdr-titles .title {
+  font-size: 25px;
+  font-weight: 900;
+  letter-spacing: -0.6px;
+  line-height: 1.25;
+}
+
+.hdr-patient {
+  font-size: 9px;
+  font-weight: 700;
+  color: var(--muted);
+  text-transform: uppercase;
+}
+
+.hdr-patient strong {
+  display: block;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0;
+  color: var(--ink);
+  margin-top: 2px;
+}
+
+/* Huge ghost numeral bled off the outer edge of every day page. */
+.ghost-num {
+  position: absolute;
+  top: 82px;
+  left: 8px;
+  font-size: 150px;
+  font-weight: 900;
+  line-height: 1;
+  color: var(--soft);
+  letter-spacing: -10px;
+  z-index: 0;
+}
+
+.closing {
+  height: 297mm;
+}
+
+/* ---------- Day page ---------- */
+.pull-quote {
+  position: relative;
+  z-index: 1;
+  margin-bottom: 26px;
+  padding-right: 20px;
+  border-right: 3px solid var(--primary);
+  font-size: 15px;
+  font-weight: 300;
+  font-style: italic;
+  line-height: 1.7;
+  color: var(--dark);
+}
+
+.meal-list {
+  position: relative;
+  z-index: 1;
+}
+
+.meal-item {
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 15px;
+  margin-bottom: 15px;
+  break-inside: avoid;
+}
+
+.meal-item:last-child {
+  border-bottom: none;
+}
+
+.mi-row {
+  display: table;
+  width: 100%;
+  table-layout: fixed;
+}
+
+.mi-index,
+.mi-body,
+.mi-photo {
+  display: table-cell;
+  vertical-align: top;
+}
+
+.mi-index {
+  width: 46px;
+  font-size: 20px;
+  font-weight: 900;
+  color: var(--tint);
+  line-height: 1;
+  padding-top: 2px;
+}
+
+.mi-body {
+  padding-left: 16px;
+}
+
+.mi-photo {
+  width: 104px;
+}
+
+.mi-photo img {
+  width: 104px;
+  height: 78px;
+  object-fit: cover;
+  background: var(--soft);
+}
+
+.mi-type {
+  font-size: 8.5px;
+  font-weight: 700;
+  color: var(--primary);
+  margin-bottom: 4px;
+}
+
+.mi-name {
+  font-size: 17px;
+  font-weight: 800;
+  letter-spacing: -0.3px;
+  line-height: 1.35;
+  margin-bottom: 5px;
+}
+
+/* Ingredients run inline, separated by middots — the magazine device that
+   keeps a long list from becoming a bulleted block. */
+.mi-ings {
+  font-size: 11.5px;
+  font-weight: 300;
+  color: #4b5563;
+  line-height: 1.7;
+}
+
+.mi-tip {
+  margin-top: 7px;
+  font-size: 10.5px;
+  line-height: 1.6;
+  color: var(--dark);
+  padding-right: 10px;
+  border-right: 2px solid var(--tint);
+}
+
+.mi-tip strong {
+  font-weight: 800;
+  letter-spacing: 0.5px;
+}
+
+/* ---------- Sections ---------- */
+.section {
+  position: relative;
+  z-index: 1;
+  margin-bottom: 26px;
+}
+
+.section h3 {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--primary);
+  border-bottom: 1px solid var(--ink);
+  padding-bottom: 7px;
+  margin-bottom: 12px;
+}
+
+.prose {
+  font-size: 12.5px;
+  font-weight: 300;
+  line-height: 1.8;
+  color: #374151;
+}
+
+.prose strong {
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.group-label {
+  font-size: 8.5px;
+  font-weight: 700;
+  color: var(--muted);
+  margin: 12px 0 5px 0;
+}
+
+/* Two text columns instead of pills — chips would fight the typography. */
+.chip-list {
+  column-count: 2;
+  column-gap: 26px;
+}
+
+.chip {
+  position: relative;
+  display: block;
+  font-size: 11.5px;
+  font-weight: 300;
+  padding: 3px 14px 3px 0;
+  border-bottom: 1px solid #f1f3f5;
+  break-inside: avoid;
+}
+
+.chip::before {
+  content: "";
+  position: absolute;
+  right: 0;
+  top: 10px;
+  width: 5px;
+  height: 5px;
+}
+
+.chip.allowed::before { background: var(--primary); }
+
+.chip.forbidden::before {
+  background: #fff;
+  border: 1px solid #9ca3af;
+  top: 9px;
+}
+
+.chip.forbidden {
+  color: var(--muted);
+}
+
+.simple-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 11.5px;
+}
+
+.simple-table th {
+  font-size: 8.5px;
+  font-weight: 700;
+  color: var(--muted);
+  text-align: right;
+  padding: 0 10px 8px 10px;
+  border-bottom: 2px solid var(--ink);
+}
+
+.simple-table td {
+  padding: 10px;
+  text-align: right;
+  font-weight: 300;
+  border-bottom: 1px solid var(--border);
+}
+
+.simple-table td:first-child {
+  font-weight: 700;
+}
+
+/* ---------- Drinks ---------- */
+.drink-card {
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 11px;
+  margin-bottom: 11px;
+  break-inside: avoid;
+}
+
+.drink-card .drink-name {
+  font-size: 14px;
+  font-weight: 800;
+  margin-bottom: 3px;
+}
+
+.drink-card .drink-timing {
+  font-size: 8.5px;
+  font-weight: 700;
+  color: var(--primary);
+  margin-right: 10px;
+}
+
+.drink-card .mi-ings {
+  font-size: 11px;
+}
+
+/* ---------- Closing ---------- */
+.closing {
+  background: var(--primary);
+  border-right: 8mm solid var(--dark);
+  color: #fff;
+  padding: 0;
+}
+
+.closing-inner {
+  padding: 150px 56px 46px 46px;
+}
+
+.closing-kicker {
+  font-size: 9.5px;
+  font-weight: 700;
+  letter-spacing: 4px;
+  opacity: 0.8;
+  padding-bottom: 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.4);
+}
+
+.closing-text {
+  margin-top: 40px;
+  font-size: 44px;
+  font-weight: 900;
+  line-height: 1.28;
+  letter-spacing: -1.2px;
+}
+
+.closing-text .light {
+  font-weight: 200;
+  display: block;
+}
+
+.closing-sub {
+  margin-top: 26px;
+  font-size: 14px;
+  font-weight: 300;
+  opacity: 0.9;
+  max-width: 60%;
+  line-height: 1.7;
+}
+
+.closing-signature {
+  position: absolute;
+  bottom: 46px;
+  right: 56px;
+  font-size: 10px;
+  font-weight: 700;
+  opacity: 0.85;
+}

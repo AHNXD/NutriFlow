@@ -73,6 +73,52 @@ curl -X POST http://127.0.0.1:8000/generate-plan-pdf \
 `app/fonts/Cairo-Variable.ttf` (SIL OFL 1.1, see `app/fonts/OFL.txt`) is
 bundled so PDF generation never depends on network access, per spec §6.
 
+## PDF designs and palettes
+
+A plan's export is described by two independent columns on `plans`:
+
+| Column | Meaning | Catalog |
+|---|---|---|
+| `pdf_layout` | the **design** — page composition, typography, how a meal is drawn | `app/layouts.py` |
+| `theme` | the **palette** — five CSS custom properties | `app/themes.py` |
+
+Any design renders in any palette, so five designs × eight palettes = 40
+combinations. Both catalogs are mirrored on the Flutter side
+(`nutri_flow/lib/theme/pdf_layouts.dart` and `pdf_themes.dart`) and the ids
+must stay identical, since the id is what's stored and sent.
+
+Each design is a directory under `app/templates/layouts/<id>/` holding
+`cover.html`, `day.html`, `notes.html` and `styles.css`. `plan.html`
+dispatches to it by id, so **adding a sixth design is a new directory plus
+one entry in `layouts.py`** — nothing else in the pipeline counts them.
+Shared page geometry, the meal grid and the header scaffold live in
+`app/templates/shared.css`.
+
+**Read the comment block at the top of `shared.css` before touching any
+stylesheet.** WeasyPrint silently drops a surprising set of modern CSS —
+all logical properties (`padding-inline-start`, `inset-inline-start`,
+`inline-size`), `box-shadow`, `text-shadow`, flex `gap`, `background-size`
+on gradients, and any gradient containing the `transparent` keyword. None
+of these warn; the page just renders wrong. The document is always
+`dir="rtl"`, so write physical properties (inline-start = `right`).
+
+### Previewing without a database
+
+`tools/preview_pdf.py` renders a realistic sample plan through the real
+renderer — no Supabase, no plan id:
+
+```bash
+python tools/make_sample_photos.py            # once: placeholder meal photos
+python tools/preview_pdf.py                   # every design, default palette
+python tools/preview_pdf.py --layout noir --theme sand
+python tools/preview_pdf.py --all-themes      # the whole matrix
+```
+
+PDFs land in `/tmp/nutriflow-previews/`. On macOS, `tools/rasterize.sh
+<pdf>` splits one into per-page PNGs for eyeballing or diffing. The sample
+plan deliberately includes a day with a single meal, a meal with no photo
+and a meal with no tip, since those are the paths that break layouts.
+
 ## Deploying to Render (free tier)
 
 Render builds this service from the `Dockerfile` in this folder — that's
@@ -170,9 +216,12 @@ to however you run/build the app (see `../nutri_flow/README.md`).
 ## Status
 
 Templates render a complete plan (cover → one page per day → instructions →
-allowed/forbidden → supplements → drinks → closing page) — verified locally
-end-to-end with WeasyPrint against synthetic data, RTL Arabic text and the
-bundled Cairo font both render correctly. The visual design is a first
-pass, not a pixel-match to the Gamma reference mentioned in the spec —
-expect a design-polish iteration once the dietitian has real data to
-look at.
+allowed/forbidden → supplements & drinks → closing page) in five designs and
+eight palettes — all 40 combinations verified locally end-to-end with
+WeasyPrint against synthetic data, including the empty-section, no-photo and
+single-meal paths. RTL Arabic text and the bundled Cairo font both render
+correctly.
+
+Known limit: a day with roughly seven or more meals still overflows onto a
+continuation page that carries no header. Each design is tuned so a typical
+five-to-six-meal day clears one sheet.
